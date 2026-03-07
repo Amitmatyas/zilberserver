@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ספר החוקים - השרת של זילבר</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&family=Varela+Round&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #5865F2;
+            --bg-dark: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-color: #eeeeee;
+            --accent-color: #ffcc00;
+        }
+
+        body {
+            font-family: 'Assistant', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://www.minecraft.net/content/dam/games/minecraft/key-art/Games_Subnav_Minecraft-Wild-Update.jpg');
+            background-size: cover;
+            border-bottom: 4px solid var(--primary-color);
+            border-radius: 0 0 20px 20px;
+            position: relative; /* לצורך הודעת ההעתקה */
+        }
+
+        .logo {
+            max-width: 200px; /* הגדלתי מעט */
+            height: auto;
+            margin-bottom: 15px;
+            /* הסרתי את המסגרת העגולה */
+        }
+
+        h1 {
+            font-family: 'Varela Round', sans-serif;
+            margin: 0;
+            color: var(--accent-color);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .ip-box {
+            background: #333;
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 15px;
+            border: 1px dashed var(--accent-color);
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer; /* מראה שאפשר ללחוץ */
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .ip-box:hover {
+            background: #444;
+        }
+
+        /* בועית הודעה "הועתק" */
+        .copy-tooltip {
+            visibility: hidden;
+            width: 80px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -40px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8em;
+            font-weight: normal;
+        }
+
+        .copy-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        .ip-box.copied .copy-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        header p {
+            font-size: 0.9em;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        section {
+            background: var(--card-bg);
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+
+        section:hover {
+            transform: translateY(-5px);
+        }
+
+        h2 {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 10px 0;
+            border-bottom: 1px solid #3d3d3d;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        li:last-child {
+            border-bottom: none;
+        }
+
+        .punishment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .punishment-table td, .punishment-table th {
+            padding: 12px;
+            border: 1px solid #444;
+            text-align: center;
+        }
+
+        .punishment-table tr:nth-child(even) {
+            background: #363636;
+        }
+
+        .footer-info {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background: #111;
+            border-radius: 10px;
+        }
+
+        /* כפתור דיסקורד חדש */
+        .discord-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .discord-btn:hover {
+            background: rgba(88, 101, 242, 0.2);
+            transform: scale(1.05);
+        }
+
+        .discord-icon {
+            width: 30px;
+            height: auto;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="https://i.ibb.co/KcT2psvc/logo.png" alt="לוגו השרת" class="logo">
+        <h1>📜 השרת של זילבר 📜</h1>
+        <div class="ip-box" id="ipAddress" onclick="copyIP()">
+            zilber.minecraft.pe
+            <span class="copy-tooltip" id="copyTooltip">הועתק!</span>
+        </div>
+        <p>לחצו על ה-IP כדי להעתיק אותו</p>
+    </header>
+
+    <div class="container">
+        
+        <section>
+            <h2>🎮 חוקים כלליים</h2>
+            <ul>
+                <li>🧩 משחקים בשביל הכיף – לא להרוס לאחרים את החוויה.</li>
+                <li>🚫 אסור להשתמש בצ’יטים או במודים (Hacks/X-Ray).</li>
+                <li>⏳ אין לגרום לאגים בשרת בכוונה.</li>
+                <li>🛠️ איסור מוחלט על הריסת מבנים ללא סיבה מוצדקת.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>⚔️ מלחמה וקרבות</h2>
+            <ul>
+                <li>🤝 מלחמה מותרת רק בהסכמת שני הצדדים מראש.</li>
+                <li>⏰ יש לתאם זמן מדויק לתחילת המלחמה.</li>
+                <li>🚩 לחימה תתבצע רחוק מבסיסים. נזק לבסיס = עונש.</li>
+                <li>🛡️ במלחמה מאושרת ליד בסיס - חובה למזער נזקים לסביבה.</li>
+                <li>🏹 חל איסור מוחלט להרוג שחקנים באזור ה-Spawn.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>🏘️ בסיסים ורכוש</h2>
+            <ul>
+                <li>🧱 אין לחפור מתחת או לפרוץ לבסיס של קבוצה יריבה.</li>
+                <li>🧨 אין לבצע Griefing (הריסה סתם) לבסיסים.</li>
+                <li>🏛️ אזור ה-Spawn הוא אזור מוגן - אין להרוס בו דבר.</li>
+                <li>❌ גניבה מחברי הקבוצה שלך אסורה בהחלט.</li>
+                <li>🗡️ גניבה מקבוצה יריבה מותרת <b>אך ורק</b> כחלק ממלחמה רשמית.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>⚖️ דרגות ענישה</h2>
+            <table class="punishment-table">
+                <thead>
+                    <tr>
+                        <th>עבירה</th>
+                        <th>עונש</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>פעם ראשונה</td><td>Kill 💀</td></tr>
+                    <tr><td>פעם שנייה</td><td>Kill 💀</td></tr>
+                    <tr><td>פעם שלישית</td><td>Kill + Clear Inventory 🎒🔥</td></tr>
+                    <tr><td>פעם רביעית</td><td>Ban ליום אחד ⛔</td></tr>
+                    <tr><td>פעם חמישית</td><td>Ban ל-5 ימים 🚫</td></tr>
+                    <tr><td>פעם שישית והלאה</td><td>Ban לשבוע 🛑</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>👑 הנהלת השרת</h2>
+            <p>בכל בעיה, פנייה או דיווח - ניתן לפנות לאדמינים:</p>
+            <ul>
+                <li>עמית מטיאס</li>
+                <li>עידן זילברמן</li>
+            </ul>
+        </section>
+
+        <div class="footer-info">
+            <a href="https://discord.gg/2wVemeKe" class="discord-btn" target="_blank">
+                <img src="https://pngimg.com/uploads/discord/discord_PNG3.png" alt="Discord Logo" class="discord-icon">
+                להצטרפות לדיסקורד
+            </a>
+            <p style="margin-top: 15px; font-size: 0.9em;">© 2026 השרת של זילבר - כל הזכויות שמורות</p>
+        </div>
+
+    </div>
+
+    <script>
+        function copyIP() {
+            // הטקסט שיש להעתיק
+            const ipText = "zilber.minecraft.pe";
+            
+            // יצירת אלמנט זמני להעתקה
+            const el = document.createElement('textarea');
+            el.value = ipText;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+
+            // הצגת בועית ה"הועתק"
+            const ipBox = document.getElementById('ipAddress');
+            ipBox.classList.add('copied');
+
+            // הסרת הבועית לאחר 2 שניות
+            setTimeout(() => {
+                ipBox.classList.remove('copied');
+            }, 2000);
+        }
+    </script>
+
+</body>
+</html>
