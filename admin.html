@@ -9,57 +9,31 @@
         :root {
             --bg: #0f1117; --sidebar: #13161e; --card: #1b1f2b; --card2: #222636;
             --border: #2a2f42; --primary: #5865F2; --accent: #ffcc00;
-            --red: #ed4245; --text: #dde1f0; --muted: #7b82a0;
+            --red: #ed4245; --orange: #e67e22; --green: #3ba55c;
+            --text: #dde1f0; --muted: #7b82a0;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Assistant', sans-serif; background: var(--bg); color: var(--text); direction: rtl; min-height: 100vh; }
 
         /* LOGIN */
-        #loginScreen {
-            min-height: 100vh; display: flex; align-items: center; justify-content: center;
-        }
-        .login-box {
-            background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-            padding: 40px 36px; width: 340px; text-align: center;
-        }
+        #loginScreen { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 40px 36px; width: 340px; text-align: center; }
         .login-box h1 { font-family: 'Varela Round'; color: var(--accent); font-size: 1.6em; margin-bottom: 8px; }
         .login-box .sub { color: var(--muted); font-size: 0.9em; margin-bottom: 24px; }
-        #loginPass {
-            width: 100%; padding: 12px; background: var(--card2); border: 1px solid var(--border);
-            color: var(--text); border-radius: 8px; font-size: 1em; margin-bottom: 12px;
-            direction: ltr; text-align: center; outline: none;
-        }
+        #loginPass { width: 100%; padding: 12px; background: var(--card2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; font-size: 1em; margin-bottom: 12px; direction: ltr; text-align: center; outline: none; }
         #loginPass:focus { border-color: var(--primary); }
-        #loginBtn {
-            width: 100%; padding: 12px; background: var(--primary); color: #fff; border: none;
-            border-radius: 8px; font-family: 'Assistant'; font-weight: 700; font-size: 1em; cursor: pointer;
-        }
+        #loginBtn { width: 100%; padding: 12px; background: var(--primary); color: #fff; border: none; border-radius: 8px; font-family: 'Assistant'; font-weight: 700; font-size: 1em; cursor: pointer; }
         #loginBtn:hover { background: #4752c4; }
         #loginErr { color: var(--red); font-size: 0.9em; margin-top: 10px; display: none; }
 
         /* DASHBOARD */
         #dashboard { display: none; }
         .layout { display: flex; min-height: 100vh; }
-
-        /* SIDEBAR */
-        .sidebar {
-            width: 220px; flex-shrink: 0; background: var(--sidebar);
-            border-left: 1px solid var(--border); padding: 24px 0;
-            position: sticky; top: 0; height: 100vh; overflow-y: auto;
-        }
-        .sidebar-title {
-            padding: 0 20px 20px; font-family: 'Varela Round';
-            color: var(--accent); font-size: 1.1em; border-bottom: 1px solid var(--border);
-            margin-bottom: 8px;
-        }
-        .nav-item {
-            display: block; padding: 12px 20px; color: var(--muted); cursor: pointer;
-            font-size: 0.95em; transition: all 0.2s; border-right: 3px solid transparent;
-            user-select: none;
-        }
+        .sidebar { width: 220px; flex-shrink: 0; background: var(--sidebar); border-left: 1px solid var(--border); padding: 24px 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+        .sidebar-title { padding: 0 20px 20px; font-family: 'Varela Round'; color: var(--accent); font-size: 1.1em; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+        .nav-item { display: block; padding: 12px 20px; color: var(--muted); cursor: pointer; font-size: 0.95em; transition: all 0.2s; border-right: 3px solid transparent; user-select: none; }
         .nav-item:hover { color: var(--text); background: rgba(88,101,242,0.08); }
         .nav-item.active { color: var(--text); background: rgba(88,101,242,0.14); border-right-color: var(--primary); }
-
         .main { flex: 1; padding: 30px; overflow-y: auto; }
 
         /* TABS */
@@ -67,8 +41,9 @@
         .tab-section.active { display: block; }
 
         /* CARDS */
-        .admin-card { background: var(--card); border-radius: 14px; border: 1px solid var(--border); padding: 22px 24px; margin-bottom: 24px; }
-        h2 { font-family: 'Varela Round'; color: var(--primary); font-size: 1.15em; margin-bottom: 18px; }
+        .admin-card { background: var(--card); border-radius: 14px; border: 1px solid var(--border); padding: 22px 24px; margin-bottom: 20px; }
+        h2 { font-family: 'Varela Round'; color: var(--primary); font-size: 1.15em; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+        .h2-actions { margin-right: auto; display: flex; gap: 8px; }
 
         /* FORMS */
         .form-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; align-items: center; }
@@ -82,16 +57,25 @@
         textarea { width: 100%; min-height: 56px; resize: vertical; }
 
         /* BUTTONS */
-        .btn { padding: 9px 18px; border: none; border-radius: 8px; font-family: 'Assistant'; font-weight: 700; font-size: 0.92em; cursor: pointer; transition: background 0.2s; }
-        .btn-blue { background: var(--primary); color: #fff; }
+        .btn { padding: 8px 16px; border: none; border-radius: 8px; font-family: 'Assistant'; font-weight: 700; font-size: 0.9em; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .btn-blue  { background: var(--primary); color: #fff; }
         .btn-blue:hover { background: #4752c4; }
-        .btn-red { background: rgba(237,66,69,0.14); color: var(--red); border: 1px solid rgba(237,66,69,0.3); padding: 6px 12px; font-size: 0.84em; }
+        .btn-red   { background: rgba(237,66,69,0.14); color: var(--red); border: 1px solid rgba(237,66,69,0.3); }
         .btn-red:hover { background: rgba(237,66,69,0.26); }
+        .btn-edit  { background: rgba(230,126,34,0.14); color: var(--orange); border: 1px solid rgba(230,126,34,0.3); }
+        .btn-edit:hover { background: rgba(230,126,34,0.26); }
+        .btn-green { background: rgba(59,165,92,0.15); color: var(--green); border: 1px solid rgba(59,165,92,0.35); }
+        .btn-green:hover { background: rgba(59,165,92,0.28); }
+        .btn-sm { padding: 5px 11px; font-size: 0.82em; }
 
         /* ITEM ROW */
-        .item-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--card2); border-radius: 8px; margin-bottom: 8px; }
-        .item-text { flex: 1; font-size: 0.9em; line-height: 1.4; }
+        .item-row { display: flex; align-items: flex-start; gap: 8px; padding: 10px 14px; background: var(--card2); border-radius: 8px; margin-bottom: 8px; }
+        .item-row.editing { background: #1a2035; border: 1px solid var(--primary); }
+        .item-text { flex: 1; font-size: 0.9em; line-height: 1.5; padding-top: 2px; }
         .item-text small { color: var(--muted); }
+        .item-edit-fields { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+        .item-edit-fields input { width: 100%; }
+        .row-btns { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
 
         /* PLAYER CARD */
         .player-card { background: var(--card2); border-radius: 10px; padding: 14px; margin-bottom: 12px; border: 1px solid var(--border); }
@@ -101,11 +85,16 @@
         .player-info strong { display: block; }
         .player-info small { color: var(--muted); font-size: 0.82em; }
         .notes-field { background: rgba(255,255,255,0.03); border: 1px dashed var(--border); color: var(--muted); font-size: 0.88em; border-radius: 6px; padding: 8px 10px; }
+
+        /* DEFAULT RULES BANNER */
+        .default-banner { background: rgba(59,165,92,0.08); border: 1px solid rgba(59,165,92,0.3); border-radius: 10px; padding: 14px 18px; margin-bottom: 18px; display: flex; align-items: center; gap: 14px; }
+        .default-banner p { flex: 1; font-size: 0.9em; color: var(--muted); }
+        .default-banner strong { color: var(--text); }
     </style>
 </head>
 <body>
 
-<!-- ── LOGIN ── -->
+<!-- LOGIN -->
 <div id="loginScreen">
     <div class="login-box">
         <h1>🔐 Admin</h1>
@@ -116,10 +105,9 @@
     </div>
 </div>
 
-<!-- ── DASHBOARD ── -->
+<!-- DASHBOARD -->
 <div id="dashboard">
     <div class="layout">
-
         <nav class="sidebar">
             <div class="sidebar-title">⚙️ ניהול</div>
             <span class="nav-item active" data-tab="tab-ann">📢 הודעות</span>
@@ -147,22 +135,16 @@
             <section class="tab-section" id="tab-ev">
                 <div class="admin-card">
                     <h2>🎯 אירועים</h2>
-                    <div class="form-row">
-                        <input type="text" id="ev-name" placeholder="שם האירוע" style="flex:1">
-                    </div>
+                    <div class="form-row"><input type="text" id="ev-name" placeholder="שם האירוע" style="flex:1"></div>
                     <div class="form-row">
                         <label>התחלה:</label>
-                        <input type="date" id="ev-sd">
-                        <input type="time" id="ev-st">
+                        <input type="date" id="ev-sd"><input type="time" id="ev-st">
                     </div>
                     <div class="form-row">
                         <label>סיום:</label>
-                        <input type="date" id="ev-ed">
-                        <input type="time" id="ev-et">
+                        <input type="date" id="ev-ed"><input type="time" id="ev-et">
                     </div>
-                    <div class="form-row">
-                        <input type="text" id="ev-desc" placeholder="תיאור (אופציונלי)" style="flex:1">
-                    </div>
+                    <div class="form-row"><input type="text" id="ev-desc" placeholder="תיאור (אופציונלי)" style="flex:1"></div>
                     <div class="form-row">
                         <label>טיימר:</label>
                         <select id="ev-timer">
@@ -185,13 +167,21 @@
                         <input type="text" id="p-island" placeholder="אי (ראשי / פרטי / נפרד)">
                         <button class="btn btn-blue" id="btn-player">+ הוסף</button>
                     </div>
-                    <p style="color:var(--muted);font-size:0.82em;margin-bottom:14px">💡 שדה ההערות פנימי בלבד – לא גלוי לשחקנים</p>
+                    <p style="color:var(--muted);font-size:0.82em;margin-bottom:14px">💡 שדה ההערות פנימי – לא גלוי לשחקנים</p>
                     <div id="player-list"></div>
                 </div>
             </section>
 
             <!-- RULES -->
             <section class="tab-section" id="tab-rules">
+
+                <!-- DEFAULT RULES LOADER -->
+                <div class="default-banner">
+                    <div>📋</div>
+                    <p><strong>טעינת חוקי ברירת מחדל</strong><br>מחיקה ברורה של כל החוקים הקיימים והוספת כל החוקים המקוריים מהמסמך.</p>
+                    <button class="btn btn-green" id="btn-load-defaults">טען חוקי ברירת מחדל</button>
+                </div>
+
                 <div class="admin-card" style="margin-bottom:20px">
                     <h2>📜 סיכום השרת</h2>
                     <div class="form-row">
@@ -202,6 +192,7 @@
                     </div>
                     <div id="rule-list-summary"></div>
                 </div>
+
                 <div class="admin-card" style="margin-bottom:20px">
                     <h2>⚔️ חוקי לחימה</h2>
                     <div class="form-row">
@@ -212,6 +203,7 @@
                     </div>
                     <div id="rule-list-combat"></div>
                 </div>
+
                 <div class="admin-card">
                     <h2>🛠️ חוקים טכניים</h2>
                     <div class="form-row">
@@ -241,15 +233,11 @@
     </div>
 </div>
 
-<!-- Firebase (compat, loaded synchronously before our script) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-
 <script>
-// Everything inside DOMContentLoaded so DOM is ready
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
 
-    /* ── FIREBASE ── */
     firebase.initializeApp({
         apiKey: "AIzaSyDlyDbpwcBcWvFnvYHb84dMEpaQFTjv-HY",
         authDomain: "tester-69fa9.firebaseapp.com",
@@ -261,14 +249,41 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     var db = firebase.database();
 
+    /* ── DEFAULT RULES DATA ── */
+    var DEFAULT_RULES = {
+        summary: [
+            { icon:'🏙️', title:'האי המרכזי', text:'הבנייה הראשית מתבצעת באי המרכזי של קוייליס. שם מקימים את הבתים והבסיסים המרכזיים.' },
+            { icon:'🏠', title:'איים פרטיים', text:'כל שחקן רשאי לבחור אי פרטי נוסף (ללא שחקנים אחרים) כדי לבנות בו בסיס אישי ומבודד.' },
+            { icon:'🏟️', title:'ארנה', text:'קיימת ארנה ייעודית לקרבות מסודרים בה ניתן להילחם בחופשיות.' },
+            { icon:'🧩', title:'ערכי יסוד', text:'משחקים בשביל הכיף – לא להרוס לאחרים את החוויה.' },
+            { icon:'🏖️', title:'אי נפרד', text:'אם החלטתם לבחור באי נפרד (אי רחוק מהבסיס הראשי) אז אינכם מורשים להיכנס לבסיס הראשי או להתחיל לחימה כלשהי.' }
+        ],
+        combat: [
+            { icon:'🚫', title:'האי המרכזי', text:'חל איסור מוחלט על קרבות והתקפות בתוך שטח האי המרכזי.' },
+            { icon:'🛡️', title:'הגנה על רכוש', text:'מותר לתקוף שחקנים מהאי הראשי רק מחוץ לגבולותיו, ובתנאי שאין פגיעה במבנים או בשחקנים אחרים שלא קשורים לקרב.' },
+            { icon:'🏝️', title:'איים פרטיים', text:'באיים הפרטיים מותר להילחם או להתקיף שחקנים.' },
+            { icon:'🏗️', title:'איסור הריסה', text:'כל פגיעה (Griefing) באי המרכזי נחשבת לעבירה חמורה ותגרור ענישה מיידית.' }
+        ],
+        technical: [
+            { icon:'⏳', title:'לאגים', text:'אין לגרום לאגים בשרת בכוונה (מכונות רדסטון מוגזמות, לופים וכו\').' },
+            { icon:'🛠️', title:'מבנים', text:'איסור מוחלט על הריסת מבנים ללא סיבה מוצדקת (גם מחוץ לאי המרכזי).' },
+            { icon:'🚫', title:'צירוף שחקנים', text:'חל איסור מוחלט על צירוף שחקנים חדשים ללא אישור 2 האדמינים ורוב חברי קבוצה.' },
+            { icon:'🤝', title:'שיתוף פעולה', text:'מי שרוצה יכול להמשיך לפתח את האי הפרטי שלו ולהיות מבודד, אך עליו לכבד את מרחב השאר.' }
+        ],
+        punishments: [
+            { offense:'פעם ראשונה',      penalty:'Kill 💀' },
+            { offense:'פעם שנייה',       penalty:'Kill 💀' },
+            { offense:'פעם שלישית',      penalty:'Kill + Clear Inventory 🎒🔥' },
+            { offense:'פעם רביעית',      penalty:'Ban ליום אחד ⛔' },
+            { offense:'פעם חמישית',      penalty:'Ban ל-5 ימים 🚫' },
+            { offense:'פעם שישית והלאה', penalty:'Ban לשבוע 🛑' }
+        ]
+    };
+
     /* ── LOGIN ── */
     var PASS = 'zilber2026';
-
     document.getElementById('loginBtn').addEventListener('click', tryLogin);
-    document.getElementById('loginPass').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') tryLogin();
-    });
-
+    document.getElementById('loginPass').addEventListener('keydown', function(e){ if(e.key==='Enter') tryLogin(); });
     function tryLogin() {
         if (document.getElementById('loginPass').value === PASS) {
             document.getElementById('loginScreen').style.display = 'none';
@@ -282,28 +297,54 @@ document.addEventListener('DOMContentLoaded', function () {
     /* ── TABS ── */
     document.querySelectorAll('.nav-item').forEach(function(item) {
         item.addEventListener('click', function() {
-            document.querySelectorAll('.tab-section').forEach(function(s) { s.classList.remove('active'); });
-            document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+            document.querySelectorAll('.tab-section').forEach(function(s){ s.classList.remove('active'); });
+            document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
             document.getElementById(item.dataset.tab).classList.add('active');
             item.classList.add('active');
         });
     });
 
-    /* ── DASHBOARD ── */
+    /* ── INIT ── */
     function startDashboard() {
         setupAnnouncements();
         setupEvents();
         setupPlayers();
         ['summary','combat','technical'].forEach(setupRules);
         setupPunishments();
+        setupDefaultLoader();
     }
 
-    /* ── UTIL: delete button ── */
+    /* ── UTIL BUTTONS ── */
     function delBtn(path) {
         var b = document.createElement('button');
-        b.className = 'btn btn-red';
+        b.className = 'btn btn-red btn-sm';
         b.textContent = 'מחק';
-        b.onclick = function() { if (confirm('למחוק?')) db.ref(path).remove(); };
+        b.onclick = function(){ if(confirm('למחוק?')) db.ref(path).remove(); };
+        return b;
+    }
+
+    function editBtn(onClick) {
+        var b = document.createElement('button');
+        b.className = 'btn btn-edit btn-sm';
+        b.textContent = '✏️ ערוך';
+        b.onclick = onClick;
+        return b;
+    }
+
+    function saveBtn(onClick) {
+        var b = document.createElement('button');
+        b.className = 'btn btn-green btn-sm';
+        b.textContent = '💾 שמור';
+        b.onclick = onClick;
+        return b;
+    }
+
+    function cancelBtn(onClick) {
+        var b = document.createElement('button');
+        b.className = 'btn btn-sm';
+        b.style.cssText = 'background:rgba(255,255,255,0.07);color:var(--muted)';
+        b.textContent = 'ביטול';
+        b.onclick = onClick;
         return b;
     }
 
@@ -317,8 +358,34 @@ document.addEventListener('DOMContentLoaded', function () {
                 var a = d[id];
                 var row = document.createElement('div');
                 row.className = 'item-row';
-                row.innerHTML = '<span class="item-text">📢 ' + a.text + ' <small>' + (a.date||'') + '</small></span>';
-                row.appendChild(delBtn('announcements/' + id));
+
+                var textSpan = document.createElement('span');
+                textSpan.className = 'item-text';
+                textSpan.innerHTML = '📢 ' + a.text + ' <small>' + (a.date||'') + '</small>';
+
+                var btns = document.createElement('div');
+                btns.className = 'row-btns';
+
+                btns.appendChild(editBtn(function() {
+                    row.classList.add('editing');
+                    var input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = a.text;
+                    input.style.flex = '1';
+                    row.replaceChild(input, textSpan);
+                    btns.innerHTML = '';
+                    btns.appendChild(saveBtn(function() {
+                        db.ref('announcements/' + id).update({ text: input.value.trim() });
+                    }));
+                    btns.appendChild(cancelBtn(function() {
+                        db.ref('announcements').once('value'); // triggers refresh
+                        location.reload(); // simple reset
+                    }));
+                }));
+                btns.appendChild(delBtn('announcements/' + id));
+
+                row.appendChild(textSpan);
+                row.appendChild(btns);
                 c.appendChild(row);
             });
         });
@@ -341,9 +408,48 @@ document.addEventListener('DOMContentLoaded', function () {
                 var e = d[id];
                 var row = document.createElement('div');
                 row.className = 'item-row';
-                row.innerHTML = '<span class="item-text">🎯 <b>' + e.name + '</b> | ' +
-                    (e.startDate||'') + ' ' + (e.startTime||'') + ' – ' + (e.endDate||'') + ' ' + (e.endTime||'') + '</span>';
-                row.appendChild(delBtn('events/' + id));
+
+                var textSpan = document.createElement('span');
+                textSpan.className = 'item-text';
+                textSpan.innerHTML = '🎯 <b>' + e.name + '</b> | ' +
+                    (e.startDate||'') + ' ' + (e.startTime||'') + ' – ' + (e.endDate||'') + ' ' + (e.endTime||'');
+
+                var btns = document.createElement('div');
+                btns.className = 'row-btns';
+
+                btns.appendChild(editBtn((function(eid, ev){
+                    return function() {
+                        row.classList.add('editing');
+                        var fields = document.createElement('div');
+                        fields.className = 'item-edit-fields';
+                        fields.innerHTML =
+                            '<input type="text" value="' + (ev.name||'') + '" placeholder="שם" id="ee-name-'+eid+'">' +
+                            '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+                            '<input type="date" value="' + (ev.startDate||'') + '" id="ee-sd-'+eid+'">' +
+                            '<input type="time" value="' + (ev.startTime||'') + '" id="ee-st-'+eid+'">' +
+                            '<input type="date" value="' + (ev.endDate||'') + '" id="ee-ed-'+eid+'">' +
+                            '<input type="time" value="' + (ev.endTime||'') + '" id="ee-et-'+eid+'">' +
+                            '</div>' +
+                            '<input type="text" value="' + (ev.description||'') + '" placeholder="תיאור" id="ee-desc-'+eid+'">';
+                        row.replaceChild(fields, textSpan);
+                        btns.innerHTML = '';
+                        btns.appendChild(saveBtn(function() {
+                            db.ref('events/' + eid).update({
+                                name: document.getElementById('ee-name-'+eid).value,
+                                startDate: document.getElementById('ee-sd-'+eid).value,
+                                startTime: document.getElementById('ee-st-'+eid).value,
+                                endDate: document.getElementById('ee-ed-'+eid).value,
+                                endTime: document.getElementById('ee-et-'+eid).value,
+                                description: document.getElementById('ee-desc-'+eid).value
+                            });
+                        }));
+                        btns.appendChild(delBtn('events/' + eid));
+                    };
+                })(id, e)));
+
+                btns.appendChild(delBtn('events/' + id));
+                row.appendChild(textSpan);
+                row.appendChild(btns);
                 c.appendChild(row);
             });
         });
@@ -351,17 +457,15 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('btn-ev').onclick = function() {
             var name = document.getElementById('ev-name').value.trim();
             if (!name) return;
-            var sd = document.getElementById('ev-sd').value;
-            var st = document.getElementById('ev-st').value;
-            var ed = document.getElementById('ev-ed').value;
-            var et = document.getElementById('ev-et').value;
+            var sd = document.getElementById('ev-sd').value, st = document.getElementById('ev-st').value;
+            var ed = document.getElementById('ev-ed').value, et = document.getElementById('ev-et').value;
             var desc = document.getElementById('ev-desc').value.trim();
             var choice = document.getElementById('ev-timer').value;
             var timerTarget = null;
-            if (choice === 'start' && sd && st) timerTarget = new Date(sd + 'T' + st).toISOString();
-            else if (choice === 'end' && ed && et) timerTarget = new Date(ed + 'T' + et).toISOString();
+            if (choice==='start' && sd && st) timerTarget = new Date(sd+'T'+st).toISOString();
+            else if (choice==='end' && ed && et) timerTarget = new Date(ed+'T'+et).toISOString();
             db.ref('events').push({ name:name, startDate:sd, startTime:st, endDate:ed, endTime:et, description:desc, timerTarget:timerTarget });
-            ['ev-name','ev-sd','ev-st','ev-ed','ev-et','ev-desc'].forEach(function(id){ document.getElementById(id).value=''; });
+            ['ev-name','ev-sd','ev-st','ev-ed','ev-et','ev-desc'].forEach(function(i){ document.getElementById(i).value=''; });
             document.getElementById('ev-timer').value = 'none';
         };
     }
@@ -379,10 +483,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 var hdr = document.createElement('div');
                 hdr.className = 'player-header';
-                hdr.innerHTML =
-                    '<div class="player-avatar">' + (p.name||'?')[0] + '</div>' +
-                    '<div class="player-info"><strong>' + (p.name||'') + '</strong><small>' + (p.island||'ללא אי') + '</small></div>';
-                hdr.appendChild(delBtn('players/' + id));
+
+                var av = document.createElement('div');
+                av.className = 'player-avatar';
+                av.textContent = (p.name||'?')[0];
+
+                var info = document.createElement('div');
+                info.className = 'player-info';
+                info.innerHTML = '<strong>' + (p.name||'') + '</strong><small>' + (p.island||'ללא אי') + '</small>';
+
+                var btns = document.createElement('div');
+                btns.className = 'row-btns';
+                btns.appendChild(editBtn((function(pid, pp){
+                    return function() {
+                        info.innerHTML =
+                            '<input type="text" value="' + (pp.name||'') + '" id="pn-'+pid+'" placeholder="שם" style="margin-bottom:4px">' +
+                            '<input type="text" value="' + (pp.island||'') + '" id="pi-'+pid+'" placeholder="אי">';
+                        btns.innerHTML = '';
+                        btns.appendChild(saveBtn(function() {
+                            db.ref('players/'+pid).update({
+                                name: document.getElementById('pn-'+pid).value.trim(),
+                                island: document.getElementById('pi-'+pid).value.trim()
+                            });
+                        }));
+                        btns.appendChild(delBtn('players/'+pid));
+                    };
+                })(id, p)));
+                btns.appendChild(delBtn('players/' + id));
+
+                hdr.appendChild(av);
+                hdr.appendChild(info);
+                hdr.appendChild(btns);
 
                 var notes = document.createElement('textarea');
                 notes.className = 'notes-field';
@@ -399,8 +530,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('btn-player').onclick = function() {
             var name = document.getElementById('p-name').value.trim();
             if (!name) return;
-            var island = document.getElementById('p-island').value.trim();
-            db.ref('players').push({ name:name, island:island, notes:'' });
+            db.ref('players').push({ name:name, island:document.getElementById('p-island').value.trim(), notes:'' });
             document.getElementById('p-name').value = '';
             document.getElementById('p-island').value = '';
         };
@@ -417,8 +547,41 @@ document.addEventListener('DOMContentLoaded', function () {
                 var r = d[id];
                 var row = document.createElement('div');
                 row.className = 'item-row';
-                row.innerHTML = '<span class="item-text">' + (r.icon||'') + ' <b>' + (r.title||'') + '</b> ' + (r.text||'') + '</span>';
-                row.appendChild(delBtn('rules/' + type + '/' + id));
+
+                var textSpan = document.createElement('span');
+                textSpan.className = 'item-text';
+                textSpan.innerHTML = (r.icon||'') + ' <b>' + (r.title||'') + '</b>' + (r.text ? ': ' + r.text : '');
+
+                var btns = document.createElement('div');
+                btns.className = 'row-btns';
+
+                btns.appendChild(editBtn((function(rid, rr, rtype){
+                    return function() {
+                        row.classList.add('editing');
+                        var fields = document.createElement('div');
+                        fields.className = 'item-edit-fields';
+                        fields.innerHTML =
+                            '<div style="display:flex;gap:6px">' +
+                            '<input type="text" value="' + (rr.icon||'') + '" id="rei-'+rid+'" placeholder="אמוג\'י" style="flex:0 0 60px">' +
+                            '<input type="text" value="' + (rr.title||'') + '" id="ret-'+rid+'" placeholder="כותרת">' +
+                            '</div>' +
+                            '<input type="text" value="' + (rr.text||'') + '" id="rex-'+rid+'" placeholder="טקסט">';
+                        row.replaceChild(fields, textSpan);
+                        btns.innerHTML = '';
+                        btns.appendChild(saveBtn(function() {
+                            db.ref('rules/'+rtype+'/'+rid).update({
+                                icon: document.getElementById('rei-'+rid).value.trim(),
+                                title: document.getElementById('ret-'+rid).value.trim(),
+                                text: document.getElementById('rex-'+rid).value.trim()
+                            });
+                        }));
+                        btns.appendChild(delBtn('rules/'+rtype+'/'+rid));
+                    };
+                })(id, r, type)));
+
+                btns.appendChild(delBtn('rules/' + type + '/' + id));
+                row.appendChild(textSpan);
+                row.appendChild(btns);
                 c.appendChild(row);
             });
         });
@@ -426,11 +589,11 @@ document.addEventListener('DOMContentLoaded', function () {
         var addBtn = document.querySelector('[data-rtype="' + type + '"]');
         if (addBtn) {
             addBtn.onclick = function() {
-                var icon  = document.getElementById('ri-' + type).value.trim();
-                var title = document.getElementById('rt-' + type).value.trim();
-                var text  = document.getElementById('rx-' + type).value.trim();
+                var icon  = document.getElementById('ri-'+type).value.trim();
+                var title = document.getElementById('rt-'+type).value.trim();
+                var text  = document.getElementById('rx-'+type).value.trim();
                 if (!title && !text) return;
-                db.ref('rules/' + type).push({ icon:icon, title:title, text:text });
+                db.ref('rules/'+type).push({ icon:icon, title:title, text:text });
                 ['ri-','rt-','rx-'].forEach(function(p){ document.getElementById(p+type).value=''; });
             };
         }
@@ -446,8 +609,37 @@ document.addEventListener('DOMContentLoaded', function () {
                 var p = d[id];
                 var row = document.createElement('div');
                 row.className = 'item-row';
-                row.innerHTML = '<span class="item-text">⚖️ <b>' + p.offense + '</b> → ' + p.penalty + '</span>';
-                row.appendChild(delBtn('rules/punishments/' + id));
+
+                var textSpan = document.createElement('span');
+                textSpan.className = 'item-text';
+                textSpan.innerHTML = '⚖️ <b>' + p.offense + '</b> → ' + p.penalty;
+
+                var btns = document.createElement('div');
+                btns.className = 'row-btns';
+
+                btns.appendChild(editBtn((function(pid, pp){
+                    return function() {
+                        row.classList.add('editing');
+                        var fields = document.createElement('div');
+                        fields.className = 'item-edit-fields';
+                        fields.innerHTML =
+                            '<input type="text" value="' + pp.offense + '" id="po-'+pid+'" placeholder="עבירה">' +
+                            '<input type="text" value="' + pp.penalty + '" id="pp-'+pid+'" placeholder="עונש">';
+                        row.replaceChild(fields, textSpan);
+                        btns.innerHTML = '';
+                        btns.appendChild(saveBtn(function() {
+                            db.ref('rules/punishments/'+pid).update({
+                                offense: document.getElementById('po-'+pid).value.trim(),
+                                penalty: document.getElementById('pp-'+pid).value.trim()
+                            });
+                        }));
+                        btns.appendChild(delBtn('rules/punishments/'+pid));
+                    };
+                })(id, p)));
+
+                btns.appendChild(delBtn('rules/punishments/' + id));
+                row.appendChild(textSpan);
+                row.appendChild(btns);
                 c.appendChild(row);
             });
         });
@@ -459,6 +651,30 @@ document.addEventListener('DOMContentLoaded', function () {
             db.ref('rules/punishments').push({ offense:off, penalty:pen });
             document.getElementById('pun-off').value = '';
             document.getElementById('pun-pen').value = '';
+        };
+    }
+
+    /* ── DEFAULT RULES LOADER ── */
+    function setupDefaultLoader() {
+        document.getElementById('btn-load-defaults').onclick = function() {
+            if (!confirm('האם למחוק את כל החוקים הקיימים ולטעון את חוקי ברירת המחדל?')) return;
+            var updates = {};
+            updates['rules/summary']     = null;
+            updates['rules/combat']      = null;
+            updates['rules/technical']   = null;
+            updates['rules/punishments'] = null;
+            db.ref().update(updates, function() {
+                var types = ['summary','combat','technical'];
+                types.forEach(function(type) {
+                    DEFAULT_RULES[type].forEach(function(rule) {
+                        db.ref('rules/'+type).push(rule);
+                    });
+                });
+                DEFAULT_RULES.punishments.forEach(function(p) {
+                    db.ref('rules/punishments').push(p);
+                });
+                alert('✅ החוקים נטענו בהצלחה!');
+            });
         };
     }
 
