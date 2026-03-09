@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin – השרת של זילבר</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&family=Varela+Round&display=swap" rel="stylesheet">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getDatabase, ref, onValue, push, set, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDlyDbpwcBcWvFnvYHb84dMEpaQFTjv-HY",
+            authDomain: "tester-69fa9.firebaseapp.com",
+            databaseURL: "https://tester-69fa9-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "tester-69fa9",
+            storageBucket: "tester-69fa9.firebasestorage.app",
+            messagingSenderId: "378563229004",
+            appId: "1:378563229004:web:5136b724eb84fd00e44be9",
+            measurementId: "G-BFJ1QQM3MS"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        /* ========== LOGIN ========== */
+        const ADMIN_PASS = 'zilber2026'; // change this
+        window.doLogin = function() {
+            const pass = document.getElementById('loginPass').value;
+            if (pass === ADMIN_PASS) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = '';
+                initDashboard();
+            } else {
+                document.getElementById('loginErr').style.display = '';
+            }
+        };
+
+        /* ========== INIT ========== */
+        function initDashboard() {
+            loadAnnouncements();
+            loadEvents();
+            loadPlayers();
+            loadRules('combat');
+            loadRules('technical');
+            loadPunishments();
+            loadRules('summary');
+        }
+
+        /* ========== ANNOUNCEMENTS ========== */
+        function loadAnnouncements() {
+            onValue(ref(db, 'announcements'), snap => {
+                const data = snap.val() || {};
+                const container = document.getElementById('ann-list');
+                container.innerHTML = '';
+                Object.entries(data).forEach(([id, a]) => {
+                    const div = document.createElement('div');
+                    div.className = 'item-row';
+                    div.innerHTML = `
+                        <span class="item-text">📢 ${a.text} <small>${a.date||''}</small></span>
+                        <button class="btn-danger sm" onclick="deleteItem('announcements','${id}')">מחק</button>`;
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        window.addAnnouncement = function() {
+            const text = document.getElementById('ann-text').value.trim();
+            if (!text) return;
+            push(ref(db, 'announcements'), { text, date: new Date().toLocaleDateString('he-IL') });
+            document.getElementById('ann-text').value = '';
+        };
+
+        /* ========== EVENTS ========== */
+        function loadEvents() {
+            onValue(ref(db, 'events'), snap => {
+                const data = snap.val() || {};
+                const container = document.getElementById('ev-list');
+                container.innerHTML = '';
+                Object.entries(data).forEach(([id, e]) => {
+                    const div = document.createElement('div');
+                    div.className = 'item-row';
+                    div.innerHTML = `
+                        <span class="item-text">🎯 <b>${e.name}</b> | ${e.startDate||''} ${e.startTime||''} – ${e.endDate||''} ${e.endTime||''}</span>
+                        <button class="btn-danger sm" onclick="deleteItem('events','${id}')">מחק</button>`;
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        window.addEvent = function() {
+            const name = document.getElementById('ev-name').value.trim();
+            const startDate = document.getElementById('ev-startDate').value;
+            const startTime = document.getElementById('ev-startTime').value;
+            const endDate = document.getElementById('ev-endDate').value;
+            const endTime = document.getElementById('ev-endTime').value;
+            const desc = document.getElementById('ev-desc').value.trim();
+            const timerChoice = document.getElementById('ev-timer').value;
+            if (!name) return;
+
+            let timerTarget = null;
+            if (timerChoice === 'start' && startDate && startTime)
+                timerTarget = new Date(`${startDate}T${startTime}`).toISOString();
+            else if (timerChoice === 'end' && endDate && endTime)
+                timerTarget = new Date(`${endDate}T${endTime}`).toISOString();
+
+            push(ref(db, 'events'), { name, startDate, startTime, endDate, endTime, description: desc, timerTarget });
+            ['ev-name','ev-startDate','ev-startTime','ev-endDate','ev-endTime','ev-desc'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('ev-timer').value = 'none';
+        };
+
+        /* ========== PLAYERS ========== */
+        function loadPlayers() {
+            onValue(ref(db, 'players'), snap => {
+                const data = snap.val() || {};
+                const container = document.getElementById('player-list');
+                container.innerHTML = '';
+                Object.entries(data).forEach(([id, p]) => {
+                    const div = document.createElement('div');
+                    div.className = 'player-card';
+                    div.innerHTML = `
+                        <div class="player-header">
+                            <div class="player-avatar">${p.name ? p.name[0] : '?'}</div>
+                            <div>
+                                <strong>${p.name}</strong>
+                                <small>${p.island||'ללא אי'}</small>
+                            </div>
+                            <button class="btn-danger sm" onclick="deleteItem('players','${id}')">הסר</button>
+                        </div>
+                        <textarea class="notes-area" placeholder="הערות פנימיות (לא גלויות ללקוח)..." 
+                            onblur="saveNotes('${id}', this.value)">${p.notes||''}</textarea>`;
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        window.addPlayer = function() {
+            const name = document.getElementById('p-name').value.trim();
+            const island = document.getElementById('p-island').value.trim();
+            if (!name) return;
+            push(ref(db, 'players'), { name, island, notes: '' });
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-island').value = '';
+        };
+
+        window.saveNotes = function(id, val) {
+            update(ref(db, `players/${id}`), { notes: val });
+        };
+
+        /* ========== RULES ========== */
+        function loadRules(type) {
+            onValue(ref(db, `rules/${type}`), snap => {
+                const data = snap.val() || {};
+                const container = document.getElementById(`rule-list-${type}`);
+                if (!container) return;
+                container.innerHTML = '';
+                Object.entries(data).forEach(([id, r]) => {
+                    const div = document.createElement('div');
+                    div.className = 'item-row';
+                    div.innerHTML = `
+                        <span class="item-text">${r.icon||''} <b>${r.title||''}</b> ${r.text||''}</span>
+                        <button class="btn-danger sm" onclick="deleteItem('rules/${type}','${id}')">מחק</button>`;
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        window.addRule = function(type) {
+            const icon = document.getElementById(`rule-icon-${type}`).value.trim();
+            const title = document.getElementById(`rule-title-${type}`).value.trim();
+            const text = document.getElementById(`rule-text-${type}`).value.trim();
+            if (!title && !text) return;
+            push(ref(db, `rules/${type}`), { icon, title, text });
+            [`rule-icon-${type}`,`rule-title-${type}`,`rule-text-${type}`].forEach(id => document.getElementById(id).value='');
+        };
+
+        /* ========== PUNISHMENTS ========== */
+        function loadPunishments() {
+            onValue(ref(db, 'rules/punishments'), snap => {
+                const data = snap.val() || {};
+                const container = document.getElementById('punishment-list');
+                container.innerHTML = '';
+                Object.entries(data).forEach(([id, p]) => {
+                    const div = document.createElement('div');
+                    div.className = 'item-row';
+                    div.innerHTML = `
+                        <span class="item-text">⚖️ <b>${p.offense}</b> → ${p.penalty}</span>
+                        <button class="btn-danger sm" onclick="deleteItem('rules/punishments','${id}')">מחק</button>`;
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        window.addPunishment = function() {
+            const offense = document.getElementById('pun-offense').value.trim();
+            const penalty = document.getElementById('pun-penalty').value.trim();
+            if (!offense || !penalty) return;
+            push(ref(db, 'rules/punishments'), { offense, penalty });
+            document.getElementById('pun-offense').value = '';
+            document.getElementById('pun-penalty').value = '';
+        };
+
+        /* ========== GENERIC DELETE ========== */
+        window.deleteItem = function(path, id) {
+            if (confirm('למחוק?')) remove(ref(db, `${path}/${id}`));
+        };
+    </script>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --sidebar: #13161e;
+            --card: #1b1f2b;
+            --card2: #222636;
+            --border: #2a2f42;
+            --primary: #5865F2;
+            --accent: #ffcc00;
+            --green: #3ba55c;
+            --red: #ed4245;
+            --text: #dde1f0;
+            --muted: #7b82a0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Assistant', sans-serif; background: var(--bg); color: var(--text); direction: rtl; min-height: 100vh; }
+
+        /* LOGIN */
+        #loginScreen {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+        }
+        .login-box {
+            background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 40px 36px; width: 340px; text-align: center;
+        }
+        .login-box h1 { font-family: 'Varela Round'; color: var(--accent); font-size: 1.6em; margin-bottom: 8px; }
+        .login-box p { color: var(--muted); font-size: 0.9em; margin-bottom: 24px; }
+        #loginPass { width: 100%; padding: 12px; background: var(--card2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; font-size: 1em; margin-bottom: 12px; direction: ltr; text-align: center; }
+        #loginErr { color: var(--red); font-size: 0.9em; margin-top: 6px; display: none; }
+
+        /* LAYOUT */
+        #dashboard { display: none; min-height: 100vh; }
+        .layout { display: flex; min-height: 100vh; }
+        .sidebar {
+            width: 220px; flex-shrink: 0; background: var(--sidebar);
+            border-left: 1px solid var(--border);
+            padding: 24px 0;
+            position: sticky; top: 0; height: 100vh; overflow-y: auto;
+        }
+        .sidebar-title { padding: 0 20px 20px; font-family: 'Varela Round'; color: var(--accent); font-size: 1.1em; border-bottom: 1px solid var(--border); }
+        .nav-item {
+            display: block; padding: 12px 20px; color: var(--muted);
+            cursor: pointer; font-size: 0.95em; transition: all 0.2s;
+            border-right: 3px solid transparent;
+        }
+        .nav-item:hover, .nav-item.active { color: var(--text); background: rgba(88,101,242,0.12); border-right-color: var(--primary); }
+        .main { flex: 1; padding: 30px; overflow-y: auto; }
+
+        /* TABS */
+        .tab-section { display: none; }
+        .tab-section.active { display: block; }
+
+        /* CARDS */
+        .admin-card-wrap { background: var(--card); border-radius: 14px; border: 1px solid var(--border); padding: 22px 24px; margin-bottom: 24px; }
+        h2 { font-family: 'Varela Round'; color: var(--primary); font-size: 1.1em; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+        h3 { font-size: 0.9em; color: var(--muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* FORM */
+        .form-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+        input[type=text], input[type=date], input[type=time], textarea, select {
+            background: var(--card2); border: 1px solid var(--border); color: var(--text);
+            border-radius: 8px; padding: 10px 12px; font-family: 'Assistant', sans-serif; font-size: 0.95em;
+            outline: none; transition: border 0.2s;
+        }
+        input[type=text]:focus, textarea:focus, select:focus { border-color: var(--primary); }
+        input[type=text] { flex: 1; min-width: 140px; }
+        input[type=date], input[type=time] { flex: 0 0 auto; }
+        textarea { width: 100%; min-height: 60px; resize: vertical; }
+        select { flex: 0 0 auto; }
+
+        /* BUTTONS */
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; font-family: 'Assistant'; font-weight: 700; font-size: 0.95em; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: #4752c4; transform: scale(1.02); }
+        .btn-danger { background: rgba(237,66,69,0.15); color: var(--red); border: 1px solid rgba(237,66,69,0.3); }
+        .btn-danger:hover { background: rgba(237,66,69,0.25); }
+        .sm { padding: 6px 12px; font-size: 0.85em; }
+
+        /* ITEM ROW */
+        .item-row {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px; background: var(--card2); border-radius: 8px; margin-bottom: 8px;
+        }
+        .item-text { flex: 1; font-size: 0.9em; }
+        .item-text small { color: var(--muted); margin-right: 6px; }
+
+        /* PLAYER CARD */
+        .player-card { background: var(--card2); border-radius: 10px; padding: 14px; margin-bottom: 12px; border: 1px solid var(--border); }
+        .player-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .player-avatar {
+            width: 38px; height: 38px; border-radius: 50%; background: var(--primary);
+            display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 1.1em; flex-shrink: 0;
+        }
+        .player-header > div { flex: 1; }
+        .player-header strong { display: block; }
+        .player-header small { color: var(--muted); font-size: 0.8em; }
+        .notes-area { background: rgba(255,255,255,0.04); border: 1px dashed var(--border); color: var(--muted); font-size: 0.88em; padding: 8px 10px; }
+
+        @media(max-width:700px) {
+            .sidebar { width: 180px; }
+            .main { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+    <div class="login-box">
+        <h1>🔐 Admin</h1>
+        <p>השרת של זילבר – ניהול</p>
+        <input type="password" id="loginPass" placeholder="סיסמת מנהל" onkeydown="if(event.key==='Enter')doLogin()">
+        <button class="btn btn-primary" style="width:100%" onclick="doLogin()">כניסה</button>
+        <p id="loginErr">❌ סיסמה שגויה</p>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+        <div class="sidebar-title">⚙️ ניהול</div>
+        <span class="nav-item active" onclick="showTab('tab-ann', this)">📢 הודעות</span>
+        <span class="nav-item" onclick="showTab('tab-ev', this)">🎯 אירועים</span>
+        <span class="nav-item" onclick="showTab('tab-players', this)">👥 שחקנים</span>
+        <span class="nav-item" onclick="showTab('tab-rules', this)">📜 חוקים</span>
+        <span class="nav-item" onclick="showTab('tab-pun', this)">⚖️ ענישה</span>
+    </nav>
+
+    <main class="main">
+
+        <!-- ANNOUNCEMENTS -->
+        <section class="tab-section active" id="tab-ann">
+            <div class="admin-card-wrap">
+                <h2>📢 הודעות</h2>
+                <div class="form-row">
+                    <input type="text" id="ann-text" placeholder="טקסט ההודעה...">
+                    <button class="btn btn-primary" onclick="addAnnouncement()">הוסף</button>
+                </div>
+                <div id="ann-list"></div>
+            </div>
+        </section>
+
+        <!-- EVENTS -->
+        <section class="tab-section" id="tab-ev">
+            <div class="admin-card-wrap">
+                <h2>🎯 אירועים</h2>
+                <div class="form-row">
+                    <input type="text" id="ev-name" placeholder="שם האירוע">
+                </div>
+                <div class="form-row">
+                    <label style="color:var(--muted);font-size:0.85em;align-self:center">התחלה:</label>
+                    <input type="date" id="ev-startDate">
+                    <input type="time" id="ev-startTime">
+                </div>
+                <div class="form-row">
+                    <label style="color:var(--muted);font-size:0.85em;align-self:center">סיום:</label>
+                    <input type="date" id="ev-endDate">
+                    <input type="time" id="ev-endTime">
+                </div>
+                <div class="form-row">
+                    <input type="text" id="ev-desc" placeholder="תיאור (אופציונלי)">
+                </div>
+                <div class="form-row">
+                    <label style="color:var(--muted);font-size:0.85em;align-self:center">טיימר לספירה לאחור:</label>
+                    <select id="ev-timer">
+                        <option value="none">ללא טיימר</option>
+                        <option value="start">ספירה לשעת התחלה</option>
+                        <option value="end">ספירה לשעת סיום</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="addEvent()">הוסף אירוע</button>
+                </div>
+                <div id="ev-list"></div>
+            </div>
+        </section>
+
+        <!-- PLAYERS -->
+        <section class="tab-section" id="tab-players">
+            <div class="admin-card-wrap">
+                <h2>👥 ניהול שחקנים</h2>
+                <div class="form-row">
+                    <input type="text" id="p-name" placeholder="שם שחקן">
+                    <input type="text" id="p-island" placeholder="אי (ראשי / פרטי / נפרד)">
+                    <button class="btn btn-primary" onclick="addPlayer()">הוסף שחקן</button>
+                </div>
+                <p style="color:var(--muted);font-size:0.82em;margin-bottom:12px;">💡 שדה ההערות פנימי בלבד – לא גלוי לשחקנים.</p>
+                <div id="player-list"></div>
+            </div>
+        </section>
+
+        <!-- RULES -->
+        <section class="tab-section" id="tab-rules">
+            <div class="admin-card-wrap" style="margin-bottom:20px">
+                <h2>📜 סיכום השרת</h2>
+                <div class="form-row">
+                    <input type="text" id="rule-icon-summary" placeholder="אימוג'י" style="flex:0 0 60px">
+                    <input type="text" id="rule-title-summary" placeholder="כותרת">
+                    <input type="text" id="rule-text-summary" placeholder="טקסט">
+                    <button class="btn btn-primary" onclick="addRule('summary')">הוסף</button>
+                </div>
+                <div id="rule-list-summary"></div>
+            </div>
+            <div class="admin-card-wrap" style="margin-bottom:20px">
+                <h2>⚔️ חוקי לחימה</h2>
+                <div class="form-row">
+                    <input type="text" id="rule-icon-combat" placeholder="אימוג'י" style="flex:0 0 60px">
+                    <input type="text" id="rule-title-combat" placeholder="כותרת">
+                    <input type="text" id="rule-text-combat" placeholder="טקסט">
+                    <button class="btn btn-primary" onclick="addRule('combat')">הוסף</button>
+                </div>
+                <div id="rule-list-combat"></div>
+            </div>
+            <div class="admin-card-wrap">
+                <h2>🛠️ חוקים טכניים</h2>
+                <div class="form-row">
+                    <input type="text" id="rule-icon-technical" placeholder="אימוג'י" style="flex:0 0 60px">
+                    <input type="text" id="rule-title-technical" placeholder="כותרת">
+                    <input type="text" id="rule-text-technical" placeholder="טקסט">
+                    <button class="btn btn-primary" onclick="addRule('technical')">הוסף</button>
+                </div>
+                <div id="rule-list-technical"></div>
+            </div>
+        </section>
+
+        <!-- PUNISHMENTS -->
+        <section class="tab-section" id="tab-pun">
+            <div class="admin-card-wrap">
+                <h2>⚖️ דרגות ענישה</h2>
+                <div class="form-row">
+                    <input type="text" id="pun-offense" placeholder="עבירה (למשל: פעם ראשונה)">
+                    <input type="text" id="pun-penalty" placeholder="עונש (למשל: Kill 💀)">
+                    <button class="btn btn-primary" onclick="addPunishment()">הוסף</button>
+                </div>
+                <div id="punishment-list"></div>
+            </div>
+        </section>
+
+    </main>
+</div>
+</div>
+
+<script>
+function showTab(id, el) {
+    document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    el.classList.add('active');
+}
+</script>
+</body>
+</html>
