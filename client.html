@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>השרת של זילבר</title>
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/he/1/14/Minecraft_Logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&family=Varela+Round&display=swap" rel="stylesheet">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDlyDbpwcBcWvFnvYHb84dMEpaQFTjv-HY",
+            authDomain: "tester-69fa9.firebaseapp.com",
+            databaseURL: "https://tester-69fa9-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "tester-69fa9",
+            storageBucket: "tester-69fa9.firebasestorage.app",
+            messagingSenderId: "378563229004",
+            appId: "1:378563229004:web:5136b724eb84fd00e44be9",
+            measurementId: "G-BFJ1QQM3MS"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // ---- Announcements & Events ----
+        onValue(ref(db, 'announcements'), snap => {
+            const data = snap.val();
+            renderAnnouncements(data ? Object.values(data) : []);
+        });
+
+        onValue(ref(db, 'events'), snap => {
+            const data = snap.val();
+            renderEvents(data ? Object.entries(data).map(([id, v]) => ({ id, ...v })) : []);
+        });
+
+        // ---- Rules ----
+        onValue(ref(db, 'rules/combat'), snap => {
+            renderRuleList('combat-rules', snap.val());
+        });
+        onValue(ref(db, 'rules/technical'), snap => {
+            renderRuleList('technical-rules', snap.val());
+        });
+        onValue(ref(db, 'rules/punishments'), snap => {
+            renderPunishments(snap.val());
+        });
+        onValue(ref(db, 'rules/summary'), snap => {
+            renderRuleList('summary-rules', snap.val());
+        });
+
+        // ---- Render helpers ----
+        function renderAnnouncements(list) {
+            const el = document.getElementById('announcements-list');
+            if (!el) return;
+            if (!list.length) {
+                el.innerHTML = '<p class="empty-msg">אין הודעות כרגע</p>';
+                return;
+            }
+            el.innerHTML = list.map(a => `
+                <div class="announcement-card">
+                    <span class="ann-icon">📢</span>
+                    <p>${a.text}</p>
+                    <small>${a.date || ''}</small>
+                </div>
+            `).join('');
+            updateContentLayout();
+        }
+
+        function renderEvents(list) {
+            const el = document.getElementById('events-list');
+            if (!el) return;
+            const now = Date.now();
+            const active = list.filter(e => !e.endDate || new Date(e.endDate).getTime() > now);
+            if (!active.length) {
+                el.innerHTML = '<p class="empty-msg">אין אירועים פעילים</p>';
+                updateContentLayout();
+                return;
+            }
+            el.innerHTML = active.map(e => {
+                const timerTarget = e.timerTarget ? new Date(e.timerTarget).getTime() : null;
+                return `
+                <div class="event-card" onclick="this.classList.toggle('open')">
+                    <div class="event-summary">
+                        <span class="event-icon">🎯</span>
+                        <div>
+                            <strong>${e.name}</strong>
+                            ${timerTarget ? `<div class="countdown" data-target="${timerTarget}">טוען...</div>` : ''}
+                        </div>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="event-details">
+                        ${e.startDate ? `<p>📅 התחלה: ${e.startDate}${e.startTime ? ' בשעה ' + e.startTime : ''}</p>` : ''}
+                        ${e.endDate ? `<p>🏁 סיום: ${e.endDate}${e.endTime ? ' בשעה ' + e.endTime : ''}</p>` : ''}
+                        ${e.description ? `<p>📝 ${e.description}</p>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+            startCountdowns();
+            updateContentLayout();
+        }
+
+        function renderRuleList(id, data) {
+            const el = document.getElementById(id);
+            if (!el || !data) return;
+            const items = Array.isArray(data) ? data : Object.values(data);
+            el.innerHTML = items.map(r => `
+                <li>
+                    <span class="rule-icon">${r.icon || '•'}</span>
+                    <div><b>${r.title || ''}</b>${r.title && r.text ? ': ' : ''}${r.text || r}</div>
+                </li>`).join('');
+        }
+
+        function renderPunishments(data) {
+            const tbody = document.getElementById('punishment-tbody');
+            if (!tbody || !data) return;
+            const items = Array.isArray(data) ? data : Object.values(data);
+            tbody.innerHTML = items.map(p => `<tr><td>${p.offense}</td><td>${p.penalty}</td></tr>`).join('');
+        }
+
+        function updateContentLayout() {
+            const section = document.getElementById('content-section');
+            const annBlock = document.getElementById('ann-block');
+            const evBlock = document.getElementById('ev-block');
+            if (!section || !annBlock || !evBlock) return;
+
+            const hasAnn = document.querySelectorAll('.announcement-card').length > 0;
+            const hasEv = document.querySelectorAll('.event-card').length > 0;
+
+            if (!hasAnn && !hasEv) {
+                section.style.display = 'none';
+            } else {
+                section.style.display = '';
+                annBlock.style.display = hasAnn ? '' : 'none';
+                evBlock.style.display = hasEv ? '' : 'none';
+                annBlock.style.flex = (hasAnn && hasEv) ? '1' : '1 1 100%';
+                evBlock.style.flex = (hasAnn && hasEv) ? '1' : '1 1 100%';
+            }
+        }
+
+        window.startCountdowns = function () {
+            document.querySelectorAll('.countdown').forEach(el => {
+                const target = parseInt(el.dataset.target);
+                const tick = () => {
+                    const diff = target - Date.now();
+                    if (diff <= 0) { el.textContent = '⏰ התחיל!'; return; }
+                    const d = Math.floor(diff / 86400000);
+                    const h = Math.floor((diff % 86400000) / 3600000);
+                    const m = Math.floor((diff % 3600000) / 60000);
+                    const s = Math.floor((diff % 60000) / 1000);
+                    el.textContent = `⏱ ${d > 0 ? d + 'ד ' : ''}${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+                    setTimeout(tick, 1000);
+                };
+                tick();
+            });
+        };
+    </script>
+    <style>
+        :root {
+            --primary: #5865F2;
+            --bg: #111217;
+            --card: #1e2028;
+            --card2: #252830;
+            --text: #e8eaf0;
+            --muted: #8b90a0;
+            --accent: #ffcc00;
+            --green: #43b581;
+            --red: #ed4245;
+            --border: #2e3140;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Assistant', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            direction: rtl;
+            line-height: 1.6;
+        }
+        /* HEADER */
+        header {
+            position: relative;
+            text-align: center;
+            padding: 70px 20px 50px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 100%),
+                        url('https://www.minecraft.net/content/dam/games/minecraft/key-art/Games_Subnav_Minecraft-Wild-Update.jpg') center/cover no-repeat;
+            border-bottom: 3px solid var(--primary);
+        }
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -3px; left: 0; right: 0;
+            height: 60px;
+            background: linear-gradient(to bottom, transparent, var(--bg));
+        }
+        .logo { max-width: 160px; margin-bottom: 16px; filter: drop-shadow(0 4px 20px rgba(0,0,0,0.7)); }
+        h1 {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 2.6em;
+            color: var(--accent);
+            text-shadow: 0 2px 20px rgba(255,204,0,0.4);
+            margin-bottom: 8px;
+        }
+        .tagline { color: var(--muted); font-size: 1em; margin-bottom: 20px; }
+        .ip-box {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: rgba(255,255,255,0.06);
+            border: 2px dashed var(--accent);
+            padding: 10px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+            transition: all 0.25s;
+            position: relative;
+        }
+        .ip-box:hover { background: rgba(255,204,0,0.12); transform: scale(1.04); }
+        .ip-copy-hint { font-size: 0.75em; color: var(--muted); margin-top: 8px; }
+        .copy-toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: var(--green); color: #fff; padding: 10px 24px; border-radius: 30px;
+            font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 999; pointer-events: none;
+        }
+        .copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* CONTAINER */
+        .container { max-width: 900px; margin: 0 auto; padding: 20px 20px 60px; }
+
+        /* SECTION */
+        section {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 26px 28px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+        h2 {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1.2em;
+            color: var(--primary);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 12px;
+            margin-bottom: 18px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        /* CONTENT LAYOUT (announcements + events) */
+        #content-section { display: none; }
+        .content-grid { display: flex; gap: 20px; flex-wrap: wrap; }
+        .content-grid > div { flex: 1; min-width: 260px; }
+        .announcement-card {
+            background: var(--card2);
+            border-right: 4px solid var(--primary);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            display: flex; align-items: flex-start; gap: 10px;
+        }
+        .announcement-card p { flex: 1; font-size: 0.95em; }
+        .announcement-card small { color: var(--muted); font-size: 0.8em; white-space: nowrap; }
+        .ann-icon { font-size: 1.3em; margin-top: 2px; }
+
+        .event-card {
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .event-card:hover { border-color: var(--primary); }
+        .event-summary {
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 16px;
+        }
+        .event-icon { font-size: 1.3em; }
+        .event-summary > div { flex: 1; }
+        .event-summary strong { display: block; }
+        .countdown { font-size: 0.85em; color: var(--accent); font-weight: 600; margin-top: 2px; }
+        .chevron { color: var(--muted); font-size: 0.7em; transition: transform 0.25s; }
+        .event-card.open .chevron { transform: rotate(180deg); }
+        .event-details {
+            display: none;
+            padding: 0 16px 14px;
+            font-size: 0.9em;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+        }
+        .event-card.open .event-details { display: block; }
+        .event-details p { margin-top: 8px; }
+        .empty-msg { color: var(--muted); font-style: italic; font-size: 0.9em; }
+
+        /* RULES */
+        .summary-box {
+            background: rgba(88,101,242,0.08);
+            border-right: 4px solid var(--primary);
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-style: italic;
+            color: #c5c8e0;
+        }
+        ul { list-style: none; }
+        ul li {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 11px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95em;
+        }
+        ul li:last-child { border-bottom: none; }
+        .rule-icon { font-size: 1.2em; flex-shrink: 0; margin-top: 1px; }
+
+        /* PUNISHMENTS TABLE */
+        .punishment-table {
+            width: 100%; border-collapse: collapse;
+            margin-top: 12px; border-radius: 10px; overflow: hidden;
+        }
+        .punishment-table th {
+            background: var(--primary); color: #fff;
+            padding: 12px 16px; text-align: center;
+        }
+        .punishment-table td {
+            padding: 12px 16px; text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .punishment-table tr:nth-child(even) td { background: rgba(255,255,255,0.03); }
+
+        /* ADMIN LIST */
+        .admins { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px; }
+        .admin-card {
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 20px;
+            display: flex; align-items: center; gap: 10px;
+            font-weight: 600;
+        }
+        .admin-avatar {
+            width: 38px; height: 38px; border-radius: 50%;
+            background: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1em; font-weight: 700; color: #fff;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: #0d0e12;
+            border-top: 1px solid var(--border);
+        }
+        .discord-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 12px 28px;
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1em;
+            transition: all 0.25s;
+        }
+        .discord-btn:hover { background: var(--primary); box-shadow: 0 0 24px rgba(88,101,242,0.35); transform: scale(1.04); }
+        footer p { color: var(--muted); font-size: 0.85em; margin-top: 14px; }
+
+        @media(max-width:600px) {
+            h1 { font-size: 1.8em; }
+            section { padding: 18px; }
+            .content-grid { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="https://i.ibb.co/KcT2psvc/logo.png" alt="לוגו" class="logo" onerror="this.style.display='none'">
+    <h1>השרת של זילבר</h1>
+    <p class="tagline">שרת מיינקראפט קהילתי ושיתופי</p>
+    <div class="ip-box" onclick="copyIP()">
+        <span>🌐</span> zilber.minecraft.pe
+    </div>
+    <p class="ip-copy-hint">לחצו להעתקת ה-IP</p>
+</header>
+
+<div class="copy-toast" id="copyToast">✅ הועתק!</div>
+
+<div class="container">
+
+    <!-- ANNOUNCEMENTS + EVENTS (dynamic layout) -->
+    <section id="content-section">
+        <h2>📣 הודעות ואירועים</h2>
+        <div class="content-grid">
+            <div id="ann-block">
+                <h3 style="font-size:0.95em;color:var(--muted);margin-bottom:12px;">הודעות</h3>
+                <div id="announcements-list"><p class="empty-msg">טוען...</p></div>
+            </div>
+            <div id="ev-block">
+                <h3 style="font-size:0.95em;color:var(--muted);margin-bottom:12px;">אירועים</h3>
+                <div id="events-list"><p class="empty-msg">טוען...</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVER SUMMARY -->
+    <section>
+        <h2>📜 סיכום השרת</h2>
+        <div class="summary-box">
+            השרת הוא חברתי ושיתופי, והעולם נשאר קבוע – אין מחיקות או ריבים. כל השחקנים פועלים יחד לקידום הקהילה.
+        </div>
+        <ul id="summary-rules">
+            <li><span class="rule-icon">🏙️</span><div><b>האי המרכזי:</b> הבנייה הראשית מתבצעת באי המרכזי של קוייליס.</div></li>
+            <li><span class="rule-icon">🏠</span><div><b>איים פרטיים:</b> כל שחקן רשאי לבחור אי פרטי נוסף לבנות בסיס אישי.</div></li>
+            <li><span class="rule-icon">🏟️</span><div><b>ארנה:</b> קיימת ארנה ייעודית לקרבות מסודרים.</div></li>
+            <li><span class="rule-icon">🧩</span><div><b>ערכי יסוד:</b> משחקים בשביל הכיף – לא להרוס לאחרים את החוויה.</div></li>
+        </ul>
+    </section>
+
+    <!-- COMBAT RULES -->
+    <section>
+        <h2>⚔️ חוקי לחימה ותקיפה</h2>
+        <ul id="combat-rules">
+            <li><span class="rule-icon">🚫</span><div><b>האי המרכזי:</b> חל איסור מוחלט על קרבות והתקפות בתוך שטח האי המרכזי.</div></li>
+            <li><span class="rule-icon">🛡️</span><div><b>הגנה על רכוש:</b> מותר לתקוף שחקנים רק מחוץ לגבולות האי המרכזי.</div></li>
+            <li><span class="rule-icon">🏝️</span><div><b>איים פרטיים:</b> באיים הפרטיים מותר להילחם.</div></li>
+            <li><span class="rule-icon">🏗️</span><div><b>איסור הריסה:</b> Griefing באי המרכזי נחשב עבירה חמורה.</div></li>
+        </ul>
+    </section>
+
+    <!-- TECHNICAL RULES -->
+    <section>
+        <h2>🛠️ חוקים טכניים וכלליים</h2>
+        <ul id="technical-rules">
+            <li><span class="rule-icon">⏳</span><div><b>לאגים:</b> אין לגרום לאגים בשרת בכוונה.</div></li>
+            <li><span class="rule-icon">🛠️</span><div><b>מבנים:</b> איסור מוחלט על הריסת מבנים ללא סיבה מוצדקת.</div></li>
+            <li><span class="rule-icon">🚫</span><div><b>צירוף שחקנים:</b> איסור על צירוף שחקנים ללא אישור 2 האדמינים ורוב חברי הקבוצה.</div></li>
+        </ul>
+    </section>
+
+    <!-- PUNISHMENTS -->
+    <section>
+        <h2>⚖️ דרגות ענישה</h2>
+        <table class="punishment-table">
+            <thead><tr><th>עבירה</th><th>עונש</th></tr></thead>
+            <tbody id="punishment-tbody">
+                <tr><td>פעם ראשונה</td><td>Kill 💀</td></tr>
+                <tr><td>פעם שנייה</td><td>Kill 💀</td></tr>
+                <tr><td>פעם שלישית</td><td>Kill + Clear Inventory 🎒🔥</td></tr>
+                <tr><td>פעם רביעית</td><td>Ban ליום אחד ⛔</td></tr>
+                <tr><td>פעם חמישית</td><td>Ban ל-5 ימים 🚫</td></tr>
+                <tr><td>פעם שישית+</td><td>Ban לשבוע 🛑</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- ADMINS -->
+    <section>
+        <h2>👑 הנהלת השרת</h2>
+        <p style="color:var(--muted);font-size:0.9em;margin-bottom:14px;">בכל בעיה, פנייה או דיווח – פנו לאדמינים:</p>
+        <div class="admins">
+            <div class="admin-card"><div class="admin-avatar">ע</div> עמית מטיאס</div>
+            <div class="admin-card"><div class="admin-avatar">ע</div> עידן זילברמן</div>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    <a href="https://discord.gg/2wVemeKe" class="discord-btn" target="_blank">
+        <img src="https://pngimg.com/uploads/discord/discord_PNG3.png" alt="Discord" style="width:22px">
+        להצטרפות לדיסקורד
+    </a>
+    <p>© 2026 השרת של זילבר</p>
+</footer>
+
+<script>
+function copyIP() {
+    navigator.clipboard.writeText('zilber.minecraft.pe').catch(() => {
+        const el = document.createElement('textarea');
+        el.value = 'zilber.minecraft.pe';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+    });
+    const toast = document.getElementById('copyToast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>
