@@ -4,265 +4,205 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>השרת של זילבר</title>
-        <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/he/1/14/Minecraft_Logo.png">
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/he/1/14/Minecraft_Logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&family=Varela+Round&display=swap" rel="stylesheet">
     <style>
-:root {
-    /* צבעי בסיס */
-    --primary-color: #5865F2;
-    --bg-dark: #1a1a1a;
-    --card-bg: #2d2d2d;
-    --text-color: #eeeeee;
-    --accent-color: #ffcc00;
-    
-    /* צבעי קבוצות */
-    --team1-color: #ff4d4d;
-    --team2-primary: #ff4d4d;
-    --team2-secondary: #ffffff;
-    --team3-color: #ffffff;
-}
+        :root {
+            --primary-color: #5865F2;
+            --bg-dark: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-color: #eeeeee;
+            --accent-color: #ffcc00;
+            --highlight-color: #43b581;
+        }
 
-body {
-    font-family: 'Assistant', sans-serif;
-    background-color: var(--bg-dark);
-    color: var(--text-color);
-    margin: 0;
-    padding: 0;
-    line-height: 1.6;
-    direction: rtl; /* תמיכה בעברית */
-}
+        body {
+            font-family: 'Assistant', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            direction: rtl;
+        }
 
-.container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-}
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-/* --- Header --- */
-header {
-    text-align: center;
-    padding: 60px 20px;
-    background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), 
-                url('https://www.minecraft.net/content/dam/games/minecraft/key-art/Games_Subnav_Minecraft-Wild-Update.jpg');
-    background-size: cover;
-    background-position: center;
-    border-bottom: 4px solid var(--primary-color);
-    border-radius: 0 0 30px 30px;
-}
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), 
+                        url('https://www.minecraft.net/content/dam/games/minecraft/key-art/Games_Subnav_Minecraft-Wild-Update.jpg');
+            background-size: cover;
+            background-position: center;
+            border-bottom: 4px solid var(--primary-color);
+            border-radius: 0 0 30px 30px;
+        }
 
-.logo {
-    max-width: 180px;
-    height: auto;
-    margin-bottom: 15px;
-    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
-}
+        .logo {
+            max-width: 180px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+        }
 
-h1 {
-    font-family: 'Varela Round', sans-serif;
-    margin: 10px 0;
-    color: var(--accent-color);
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
-    font-size: 2.5em;
-}
+        h1 {
+            font-family: 'Varela Round', sans-serif;
+            margin: 10px 0;
+            color: var(--accent-color);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+            font-size: 2.5em;
+        }
 
-.ip-box {
-    background: #333;
-    padding: 12px 25px;
-    border-radius: 12px;
-    display: inline-block;
-    margin-top: 15px;
-    border: 2px dashed var(--accent-color);
-    font-weight: bold;
-    letter-spacing: 1px;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.3s ease;
-}
+        .ip-box {
+            background: #333;
+            padding: 12px 25px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 15px;
+            border: 2px dashed var(--accent-color);
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
 
-.ip-box:hover {
-    background: #444;
-    transform: scale(1.05);
-}
+        .ip-box:hover {
+            background: #444;
+            transform: scale(1.05);
+        }
 
-.copy-tooltip {
-    visibility: hidden;
-    width: 80px;
-    background-color: #555;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 10;
-    bottom: 125%;
-    left: 50%;
-    margin-left: -40px;
-    opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 0.8em;
-}
+        .copy-tooltip {
+            visibility: hidden;
+            width: 80px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -40px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8em;
+        }
 
-.ip-box.copied .copy-tooltip {
-    visibility: visible;
-    opacity: 1;
-}
+        .ip-box.copied .copy-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
 
-/* --- Sections General --- */
-section {
-    background: var(--card-bg);
-    margin: 30px 0;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-}
+        section {
+            background: var(--card-bg);
+            margin: 30px 0;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
 
-h2 {
-    border-bottom: 2px solid var(--primary-color);
-    padding-bottom: 10px;
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 0;
-}
+        h2 {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 0;
+        }
 
-ul {
-    list-style: none;
-    padding: 0;
-}
+        .summary-box {
+            background: rgba(88, 101, 242, 0.1);
+            border-right: 5px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
 
-ul li {
-    padding: 12px 0;
-    border-bottom: 1px solid #3d3d3d;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+        ul {
+            list-style: none;
+            padding: 0;
+        }
 
-ul li:last-child {
-    border-bottom: none;
-}
+        ul li {
+            padding: 12px 0;
+            border-bottom: 1px solid #3d3d3d;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
 
-/* --- Teams Grid System --- */
-.teams-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-}
+        ul li:last-child {
+            border-bottom: none;
+        }
 
-.team-card {
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 15px;
-    padding: 20px;
-    text-align: center;
-    border: 2px solid transparent;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+        .punishment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            overflow: hidden;
+            border-radius: 10px;
+        }
 
-.team-card:hover {
-    transform: translateY(-8px);
-}
+        .punishment-table th {
+            background: var(--primary-color);
+            color: white;
+        }
 
-.team-header {
-    font-size: 1.4em;
-    font-weight: bold;
-    margin-bottom: 15px;
-    display: block;
-}
+        .punishment-table td, .punishment-table th {
+            padding: 15px;
+            border: 1px solid #444;
+            text-align: center;
+        }
 
-.member-list {
-    margin-top: 10px;
-}
+        .punishment-table tr:nth-child(even) {
+            background: #363636;
+        }
 
-.member-list li {
-    justify-content: center; /* מרכז את השמות בכרטיס */
-    font-size: 1.1em;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-}
+        .footer-info {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            background: #111;
+            border-radius: 20px;
+        }
 
-/* עיצוב ספציפי לקבוצות */
-.team-1 {
-    border-color: var(--team1-color);
-    box-shadow: 0 0 15px rgba(255, 77, 77, 0.1);
-}
+        .discord-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
 
-.team-2 {
-    border: 2px dashed var(--team2-primary);
-    outline: 2px solid var(--team2-secondary);
-    outline-offset: -6px;
-    background: rgba(255, 255, 255, 0.07);
-}
+        .discord-btn:hover {
+            background: var(--primary-color);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(88, 101, 242, 0.4);
+        }
 
-.team-3 {
-    border-color: var(--team3-color);
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
-}
+        .discord-icon {
+            width: 25px;
+            height: auto;
+        }
 
-/* --- Table --- */
-.punishment-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-    overflow: hidden;
-    border-radius: 10px;
-}
-
-.punishment-table th {
-    background: var(--primary-color);
-    color: white;
-}
-
-.punishment-table td, .punishment-table th {
-    padding: 15px;
-    border: 1px solid #444;
-    text-align: center;
-}
-
-.punishment-table tr:nth-child(even) {
-    background: #363636;
-}
-
-/* --- Footer & Discord --- */
-.footer-info {
-    text-align: center;
-    margin-top: 50px;
-    padding: 30px;
-    background: #111;
-    border-radius: 20px;
-}
-
-.discord-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 24px;
-    background: transparent;
-    border: 2px solid var(--primary-color);
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-.discord-btn:hover {
-    background: var(--primary-color);
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(88, 101, 242, 0.4);
-}
-
-.discord-icon {
-    width: 25px;
-    height: auto;
-}
-
-/* התאמה לניידים */
-@media (max-width: 600px) {
-    h1 { font-size: 1.8em; }
-    .teams-container { grid-template-columns: 1fr; }
-    section { padding: 15px; }
-}
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8em; }
+            section { padding: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -277,82 +217,44 @@ ul li:last-child {
         <p>לחצו על ה-IP כדי להעתיק אותו</p>
     </header>
 
-    <div class="container"> <section>
-            <h2>🛡️ חלוקת קבוצות</h2>
-            <div class="teams-container">
-                <div class="team-card team-1">
-                    <span class="team-header" style="color: var(--team1-color)">🔴 קבוצה 1</span>
-                    <ul class="member-list">
-                        <li>קליאצקין</li>
-                        <li>עוז</li>
-                        <li>קוייליס</li>
-                        <li>ריבן</li>
-                        <li>ג׳יאר</li>
-                    </ul>
-                </div>
-
-                <div class="team-card team-2">
-                    <span class="team-header">
-                        <span style="color: var(--team2-primary)">🔴</span>
-                        <span style="color: var(--team2-secondary)">⚪</span> 
-                        קבוצה 2
-                    </span>
-                    <ul class="member-list">
-                        <li>זילבר</li>
-                        <li>אילן</li>
-                        <li>מטיאס</li>
-                        <li>שקד</li>
-                    </ul>
-                </div>
-
-                <div class="team-card team-3">
-                    <span class="team-header" style="color: var(--team3-color)">⚪ קבוצה 3</span>
-                    <ul class="member-list">
-                        <li>מיני גולדי</li>
-                        <li>שאשא</li>
-                        <li>גולדי</li>
-                        <li>רן</li>
-                    </ul>
-                </div>
+    <div class="container">
+        
+        <section>
+            <h2>📜 סיכום השרת</h2>
+            <div class="summary-box">
+                השרת הוא חברתי ושיתופי, והעולם נשאר קבוע – אין מחיקות או ריבים. כל השחקנים פועלים יחד לקידום הקהילה.
             </div>
-        </section>
-
-        <section>
-            <h2>🎮 חוקים כלליים</h2>
             <ul>
-                <li>🧩 משחקים בשביל הכיף – לא להרוס לאחרים את החוויה.</li>
-                <li>🚫 אסור להשתמש בצ’יטים או במודים.</li>
-                <li>⏳ אין לגרום לאגים בשרת בכוונה.</li>
-                <li>🛠️ איסור מוחלט על הריסת מבנים ללא סיבה מוצדקת.</li>
+                <li>🏝️ <b>האי המרכזי:</b> הבנייה הראשית מתבצעת באי המרכזי של קוייליס. שם מקימים את הבתים והבסיסים המרכזיים.</li>
+                <li>🏠 <b>איים פרטיים:</b> כל שחקן רשאי לבחור אי פרטי נוסף (ללא שחקנים אחרים) כדי לבנות בו בסיס אישי ומבודד.</li>
+                <li>🏟️ <b>ארנה:</b> קיימת ארנה ייעודית לקרבות מסודרים בה ניתן להילחם בחופשיות.</li>
+                <li>🧩 <b>ערכי יסוד:</b> משחקים בשביל הכיף – לא להרוס לאחרים את החוויה.</li>
             </ul>
         </section>
 
         <section>
-            <h2>⚔️ מלחמה וקרבות</h2>
+            <h2>⚔️ חוקי לחימה ותקיפה</h2>
             <ul>
-                <li>🤝 מלחמה מותרת רק בהכרזה רשמית בצ׳אט בדיסקורד ובמיינקראפט.</li>
-                <li>🚩 לחימה תתבצע רחוק מבסיסים. נזק לבסיס = עונש.</li>
-                <li>🛡️ במלחמה מאושרת ליד בסיס - חובה למזער נזקים לסביבה.</li>
-                <li>🏹 חל איסור מוחלט להרוג שחקנים באזור ה-Spawn.</li>
-                <li>🎯 פעולת התנקשות יכולה להיות רק על שחקן אחד מהקבוצה היריבה ואסור לעוד שחקנים מהקבוצה המתבקשת להתנקש בעוד אנשים בזמן זה.</li>
-                <li>⚔️ פעולת התנקשות יכולה לגרור לקרב ללא הודעה מראש.</li>
-                <li>🛡️ רק אם מתקיפים אותך מותר לך להחזיר להם (הגנה עצמית).</li>
+                <li>🚫 <b>האי המרכזי:</b> חל איסור מוחלט על קרבות והתקפות בתוך שטח האי המרכזי.</li>
+                <li>🛡️ <b>הגנה על רכוש:</b> מותר לתקוף שחקנים מהאי הראשי רק מחוץ לגבולותיו, ובתנאי שאין פגיעה במבנים או בשחקנים אחרים שלא קשורים לקרב.</li>
+                <li>🏝️ <b>איים פרטיים:</b> באיים הפרטיים מותר להילחם או להתקיף שחקנים.</li>
+                <li>🏗️ <b>איסור הריסה:</b> כל פגיעה (Griefing) באי המרכזי נחשבת לעבירה חמורה ותגרור ענישה מיידית.</li>
             </ul>
         </section>
 
         <section>
-            <h2>🏘️ בסיסים ורכוש</h2>
+            <h2>🛠️ חוקים טכניים וכלליים</h2>
             <ul>
-                <li>🧱 אין לחפור מתחת או לפרוץ לבסיס של קבוצה יריבה אלא אם הוכרזה מלחמה רשמית.</li>
-                <li>🧨 אין לבצע הריסה סתם לבסיסים.</li>
-                <li>🏛️ אזור ה-Spawn הוא אזור מוגן - אין להרוס בו דבר.</li>
-                <li>❌ גניבה מחברי הקבוצה שלך אסורה בהחלט.</li>
-                <li>🗡️ גניבה מקבוצה יריבה מותרת <b>אך ורק</b> כחלק ממלחמה רשמית.</li>
+                <li>⏳ <b>לאגים:</b> אין לגרום לאגים בשרת בכוונה (מכונות רדסטון מוגזמות, לופים וכו').</li>
+                <li>🛠️ <b>מבנים:</b> איסור מוחלט על הריסת מבנים ללא סיבה מוצדקת (גם מחוץ לאי המרכזי).</li>
+                <li>🚫 <b>צירוף שחקנים:</b> חל איסור מוחלט על צירוף שחקנים חדשים ללא אישור 2 האדמינים ורוב חברי קבוצה.</li>
+                <li>🤝 <b>שיתוף פעולה:</b> מי שרוצה יכול להמשיך לפתח את האי הפרטי שלו ולהיות מבודד, אך עליו לכבד את מרחב השאר.</li>
             </ul>
         </section>
 
         <section>
             <h2>⚖️ דרגות ענישה</h2>
+            <p>כל פגיעה באי המרכזי או מעבר על החוקים משתייכת לטבלה הבאה:</p>
             <table class="punishment-table">
                 <thead>
                     <tr>
@@ -373,7 +275,7 @@ ul li:last-child {
 
         <section>
             <h2>👑 הנהלת השרת</h2>
-            <p>בכל בעיה, פנייה או דיווח - ניתן לפנות לאדמינים:</p>
+            <p>בכל בעיה, פנייה או דיווח על נזק באי המרכזי - ניתן לפנות לאדמינים:</p>
             <ul>
                 <li>עמית מטיאס</li>
                 <li>עידן זילברמן</li>
@@ -385,17 +287,14 @@ ul li:last-child {
                 <img src="https://pngimg.com/uploads/discord/discord_PNG3.png" alt="Discord Logo" class="discord-icon">
                 להצטרפות לדיסקורד
             </a>
-            <p style="margin-top: 15px; font-size: 0.9em;">© 2026 השרת של זילבר - כל הזכויות שמורות</p>
+            <p style="margin-top: 15px; font-size: 0.9em;">© 2026 השרת של זילבר - חברתי ושיתופי</p>
         </div>
 
-    </div> ```
+    </div>
 
     <script>
         function copyIP() {
-            // הטקסט שיש להעתיק
             const ipText = "zilber.minecraft.pe";
-            
-            // יצירת אלמנט זמני להעתקה
             const el = document.createElement('textarea');
             el.value = ipText;
             document.body.appendChild(el);
@@ -403,11 +302,9 @@ ul li:last-child {
             document.execCommand('copy');
             document.body.removeChild(el);
 
-            // הצגת בועית ה"הועתק"
             const ipBox = document.getElementById('ipAddress');
             ipBox.classList.add('copied');
 
-            // הסרת הבועית לאחר 2 שניות
             setTimeout(() => {
                 ipBox.classList.remove('copied');
             }, 2000);
