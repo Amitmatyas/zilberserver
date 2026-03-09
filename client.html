@@ -4,489 +4,558 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>השרת של זילבר</title>
-    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/he/1/14/Minecraft_Logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&family=Varela+Round&display=swap" rel="stylesheet">
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDlyDbpwcBcWvFnvYHb84dMEpaQFTjv-HY",
-            authDomain: "tester-69fa9.firebaseapp.com",
-            databaseURL: "https://tester-69fa9-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "tester-69fa9",
-            storageBucket: "tester-69fa9.firebasestorage.app",
-            messagingSenderId: "378563229004",
-            appId: "1:378563229004:web:5136b724eb84fd00e44be9",
-            measurementId: "G-BFJ1QQM3MS"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // ---- Announcements & Events ----
-        onValue(ref(db, 'announcements'), snap => {
-            const data = snap.val();
-            renderAnnouncements(data ? Object.values(data) : []);
-        });
-
-        onValue(ref(db, 'events'), snap => {
-            const data = snap.val();
-            renderEvents(data ? Object.entries(data).map(([id, v]) => ({ id, ...v })) : []);
-        });
-
-        // ---- Rules ----
-        onValue(ref(db, 'rules/combat'), snap => {
-            renderRuleList('combat-rules', snap.val());
-        });
-        onValue(ref(db, 'rules/technical'), snap => {
-            renderRuleList('technical-rules', snap.val());
-        });
-        onValue(ref(db, 'rules/punishments'), snap => {
-            renderPunishments(snap.val());
-        });
-        onValue(ref(db, 'rules/summary'), snap => {
-            renderRuleList('summary-rules', snap.val());
-        });
-
-        // ---- Render helpers ----
-        function renderAnnouncements(list) {
-            const el = document.getElementById('announcements-list');
-            if (!el) return;
-            if (!list.length) {
-                el.innerHTML = '<p class="empty-msg">אין הודעות כרגע</p>';
-                return;
-            }
-            el.innerHTML = list.map(a => `
-                <div class="announcement-card">
-                    <span class="ann-icon">📢</span>
-                    <p>${a.text}</p>
-                    <small>${a.date || ''}</small>
-                </div>
-            `).join('');
-            updateContentLayout();
-        }
-
-        function renderEvents(list) {
-            const el = document.getElementById('events-list');
-            if (!el) return;
-            const now = Date.now();
-            const active = list.filter(e => !e.endDate || new Date(e.endDate).getTime() > now);
-            if (!active.length) {
-                el.innerHTML = '<p class="empty-msg">אין אירועים פעילים</p>';
-                updateContentLayout();
-                return;
-            }
-            el.innerHTML = active.map(e => {
-                const timerTarget = e.timerTarget ? new Date(e.timerTarget).getTime() : null;
-                return `
-                <div class="event-card" onclick="this.classList.toggle('open')">
-                    <div class="event-summary">
-                        <span class="event-icon">🎯</span>
-                        <div>
-                            <strong>${e.name}</strong>
-                            ${timerTarget ? `<div class="countdown" data-target="${timerTarget}">טוען...</div>` : ''}
-                        </div>
-                        <span class="chevron">▼</span>
-                    </div>
-                    <div class="event-details">
-                        ${e.startDate ? `<p>📅 התחלה: ${e.startDate}${e.startTime ? ' בשעה ' + e.startTime : ''}</p>` : ''}
-                        ${e.endDate ? `<p>🏁 סיום: ${e.endDate}${e.endTime ? ' בשעה ' + e.endTime : ''}</p>` : ''}
-                        ${e.description ? `<p>📝 ${e.description}</p>` : ''}
-                    </div>
-                </div>`;
-            }).join('');
-            startCountdowns();
-            updateContentLayout();
-        }
-
-        function renderRuleList(id, data) {
-            const el = document.getElementById(id);
-            if (!el || !data) return;
-            const items = Array.isArray(data) ? data : Object.values(data);
-            el.innerHTML = items.map(r => `
-                <li>
-                    <span class="rule-icon">${r.icon || '•'}</span>
-                    <div><b>${r.title || ''}</b>${r.title && r.text ? ': ' : ''}${r.text || r}</div>
-                </li>`).join('');
-        }
-
-        function renderPunishments(data) {
-            const tbody = document.getElementById('punishment-tbody');
-            if (!tbody || !data) return;
-            const items = Array.isArray(data) ? data : Object.values(data);
-            tbody.innerHTML = items.map(p => `<tr><td>${p.offense}</td><td>${p.penalty}</td></tr>`).join('');
-        }
-
-        function updateContentLayout() {
-            const section = document.getElementById('content-section');
-            const annBlock = document.getElementById('ann-block');
-            const evBlock = document.getElementById('ev-block');
-            if (!section || !annBlock || !evBlock) return;
-
-            const hasAnn = document.querySelectorAll('.announcement-card').length > 0;
-            const hasEv = document.querySelectorAll('.event-card').length > 0;
-
-            if (!hasAnn && !hasEv) {
-                section.style.display = 'none';
-            } else {
-                section.style.display = '';
-                annBlock.style.display = hasAnn ? '' : 'none';
-                evBlock.style.display = hasEv ? '' : 'none';
-                annBlock.style.flex = (hasAnn && hasEv) ? '1' : '1 1 100%';
-                evBlock.style.flex = (hasAnn && hasEv) ? '1' : '1 1 100%';
-            }
-        }
-
-        window.startCountdowns = function () {
-            document.querySelectorAll('.countdown').forEach(el => {
-                const target = parseInt(el.dataset.target);
-                const tick = () => {
-                    const diff = target - Date.now();
-                    if (diff <= 0) { el.textContent = '⏰ התחיל!'; return; }
-                    const d = Math.floor(diff / 86400000);
-                    const h = Math.floor((diff % 86400000) / 3600000);
-                    const m = Math.floor((diff % 3600000) / 60000);
-                    const s = Math.floor((diff % 60000) / 1000);
-                    el.textContent = `⏱ ${d > 0 ? d + 'ד ' : ''}${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-                    setTimeout(tick, 1000);
-                };
-                tick();
-            });
-        };
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&family=Varela+Round&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #5865F2;
-            --bg: #111217;
-            --card: #1e2028;
-            --card2: #252830;
-            --text: #e8eaf0;
-            --muted: #8b90a0;
-            --accent: #ffcc00;
-            --green: #43b581;
-            --red: #ed4245;
-            --border: #2e3140;
+    :root {
+        --primary-color: #5865F2;
+        --bg-dark: #1a1a1a;
+        --card-bg: #2d2d2d;
+        --text-color: #eeeeee;
+        --accent-color: #ffcc00;
+        --highlight-color: #43b581;
+    }
+
+    body {
+        font-family: 'Assistant', sans-serif;
+        background-color: var(--bg-dark);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+        direction: rtl;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    header {
+        text-align: center;
+        padding: 40px 20px;
+        background-color: #0a0a1a;
+        border-bottom: 4px solid var(--primary-color);
+        border-radius: 0 0 30px 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* עיצוב הלוגו החדש */
+    .logo-img {
+        max-width: 200px; /* ניתן לשנות את הגודל כאן */
+        height: auto;
+        margin-bottom: 20px;
+        filter: drop-shadow(0 0 10px rgba(88, 101, 242, 0.5));
+    }
+
+    h1 {
+        font-family: 'Varela Round', sans-serif;
+        margin: 10px 0;
+        color: var(--accent-color);
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+        font-size: 2.5em;
+    }
+
+    .ip-box {
+        background: #333;
+        padding: 12px 25px;
+        border-radius: 12px;
+        display: inline-block;
+        margin-top: 15px;
+        border: 2px dashed var(--accent-color);
+        font-weight: bold;
+        letter-spacing: 1px;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .ip-box:hover {
+        background: #444;
+        transform: scale(1.05);
+    }
+
+    .copy-tooltip {
+        visibility: hidden;
+        width: 80px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 10;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -40px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 0.8em;
+    }
+
+    .ip-box.copied .copy-tooltip {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    section {
+        background: var(--card-bg);
+        margin: 30px 0;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    h2 {
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 0;
+    }
+
+    .summary-box {
+        background: rgba(88, 101, 242, 0.1);
+        border-right: 5px solid var(--primary-color);
+        padding: 15px;
+        margin-bottom: 20px;
+        font-style: italic;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    ul li {
+        padding: 12px 0;
+        border-bottom: 1px solid #3d3d3d;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    ul li:last-child {
+        border-bottom: none;
+    }
+
+    .punishment-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        overflow: hidden;
+        border-radius: 10px;
+    }
+
+    .punishment-table th {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .punishment-table td, .punishment-table th {
+        padding: 15px;
+        border: 1px solid #444;
+        text-align: center;
+    }
+
+    .punishment-table tr:nth-child(even) {
+        background: #363636;
+    }
+
+        /* ── ANNOUNCEMENTS ── */
+        .ann-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #3d3d3d;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Assistant', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            direction: rtl;
-            line-height: 1.6;
-        }
-        /* HEADER */
-        header {
-            position: relative;
-            text-align: center;
-            padding: 70px 20px 50px;
-            background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 100%),
-            border-bottom: 3px solid var(--primary);
-        }
-        header::after {
-            content: '';
-            position: absolute;
-            bottom: -3px; left: 0; right: 0;
-            height: 60px;
-            background: linear-gradient(to bottom, transparent, var(--bg));
-        }
-        .logo { max-width: 160px; margin-bottom: 16px; filter: drop-shadow(0 4px 20px rgba(0,0,0,0.7)); }
-        h1 {
-            font-family: 'Varela Round', sans-serif;
-            font-size: 2.6em;
-            color: var(--accent);
-            text-shadow: 0 2px 20px rgba(255,204,0,0.4);
-            margin-bottom: 8px;
-        }
-        .tagline { color: var(--muted); font-size: 1em; margin-bottom: 20px; }
-        .ip-box {
-            display: inline-flex; align-items: center; gap: 10px;
-            background: rgba(255,255,255,0.06);
-            border: 2px dashed var(--accent);
-            padding: 10px 24px;
-            border-radius: 12px;
+        .ann-item:last-child { border-bottom: none; }
+        .ann-date { color: #888; font-size: 0.82em; margin-top: 3px; white-space: nowrap; }
+
+        /* ── EVENTS ── */
+        .event-item {
+            padding: 14px 0;
+            border-bottom: 1px solid #3d3d3d;
             cursor: pointer;
-            font-weight: 700;
-            font-size: 1.1em;
-            letter-spacing: 1px;
-            transition: all 0.25s;
-            position: relative;
         }
-        .ip-box:hover { background: rgba(255,204,0,0.12); transform: scale(1.04); }
-        .ip-copy-hint { font-size: 0.75em; color: var(--muted); margin-top: 8px; }
-        .copy-toast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
-            background: var(--green); color: #fff; padding: 10px 24px; border-radius: 30px;
-            font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 999; pointer-events: none;
+        .event-item:last-child { border-bottom: none; }
+        .event-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-        /* CONTAINER */
-        .container { max-width: 900px; margin: 0 auto; padding: 20px 20px 60px; }
-
-        /* SECTION */
-        section {
-            background: var(--card);
-            border-radius: 16px;
-            padding: 26px 28px;
-            margin-bottom: 24px;
-            border: 1px solid var(--border);
+        .event-top strong { flex: 1; }
+        .event-countdown {
+            background: rgba(255,204,0,0.15);
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 0.88em;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,204,0,0.3);
         }
-        h2 {
-            font-family: 'Varela Round', sans-serif;
-            font-size: 1.2em;
-            color: var(--primary);
-            border-bottom: 2px solid var(--border);
-            padding-bottom: 12px;
-            margin-bottom: 18px;
-            display: flex; align-items: center; gap: 10px;
+        .event-chevron {
+            color: #888;
+            font-size: 0.75em;
+            transition: transform 0.25s;
         }
-
-        /* CONTENT LAYOUT (announcements + events) */
-        #content-section { display: none; }
-        .content-grid { display: flex; gap: 20px; flex-wrap: wrap; }
-        .content-grid > div { flex: 1; min-width: 260px; }
-        .announcement-card {
-            background: var(--card2);
-            border-right: 4px solid var(--primary);
-            border-radius: 10px;
-            padding: 14px 16px;
-            margin-bottom: 12px;
-            display: flex; align-items: flex-start; gap: 10px;
-        }
-        .announcement-card p { flex: 1; font-size: 0.95em; }
-        .announcement-card small { color: var(--muted); font-size: 0.8em; white-space: nowrap; }
-        .ann-icon { font-size: 1.3em; margin-top: 2px; }
-
-        .event-card {
-            background: var(--card2);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            margin-bottom: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
-        .event-card:hover { border-color: var(--primary); }
-        .event-summary {
-            display: flex; align-items: center; gap: 12px;
-            padding: 14px 16px;
-        }
-        .event-icon { font-size: 1.3em; }
-        .event-summary > div { flex: 1; }
-        .event-summary strong { display: block; }
-        .countdown { font-size: 0.85em; color: var(--accent); font-weight: 600; margin-top: 2px; }
-        .chevron { color: var(--muted); font-size: 0.7em; transition: transform 0.25s; }
-        .event-card.open .chevron { transform: rotate(180deg); }
+        .event-item.open .event-chevron { transform: rotate(180deg); }
         .event-details {
             display: none;
-            padding: 0 16px 14px;
-            font-size: 0.9em;
-            color: var(--muted);
-            border-top: 1px solid var(--border);
+            margin-top: 10px;
+            padding: 12px 14px;
+            background: rgba(88,101,242,0.07);
+            border-right: 3px solid var(--primary-color);
+            border-radius: 6px;
+            font-size: 0.92em;
+            color: #ccc;
         }
-        .event-card.open .event-details { display: block; }
-        .event-details p { margin-top: 8px; }
-        .empty-msg { color: var(--muted); font-style: italic; font-size: 0.9em; }
+        .event-item.open .event-details { display: block; }
+        .event-details p { margin: 5px 0; }
 
-        /* RULES */
-        .summary-box {
-            background: rgba(88,101,242,0.08);
-            border-right: 4px solid var(--primary);
-            padding: 14px 16px;
-            border-radius: 8px;
-            margin-bottom: 18px;
-            font-style: italic;
-            color: #c5c8e0;
+        /* ── CONTENT GRID (announcements + events side by side) ── */
+        .content-grid {
+            display: flex;
+            gap: 24px;
         }
-        ul { list-style: none; }
-        ul li {
-            display: flex; align-items: flex-start; gap: 10px;
-            padding: 11px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.95em;
+        .content-grid > div {
+            flex: 1;
+            min-width: 0;
         }
-        ul li:last-child { border-bottom: none; }
-        .rule-icon { font-size: 1.2em; flex-shrink: 0; margin-top: 1px; }
-
-        /* PUNISHMENTS TABLE */
-        .punishment-table {
-            width: 100%; border-collapse: collapse;
-            margin-top: 12px; border-radius: 10px; overflow: hidden;
+        .content-col-title {
+            font-size: 0.82em;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #3d3d3d;
         }
-        .punishment-table th {
-            background: var(--primary); color: #fff;
-            padding: 12px 16px; text-align: center;
-        }
-        .punishment-table td {
-            padding: 12px 16px; text-align: center;
-            border-bottom: 1px solid var(--border);
-        }
-        .punishment-table tr:nth-child(even) td { background: rgba(255,255,255,0.03); }
-
-        /* ADMIN LIST */
-        .admins { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px; }
-        .admin-card {
-            background: var(--card2);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px 20px;
-            display: flex; align-items: center; gap: 10px;
-            font-weight: 600;
-        }
-        .admin-avatar {
-            width: 38px; height: 38px; border-radius: 50%;
-            background: var(--primary);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.1em; font-weight: 700; color: #fff;
+        @media (max-width: 600px) {
+            .content-grid { flex-direction: column; gap: 10px; }
         }
 
-        /* FOOTER */
-        footer {
+        /* ── FOOTER ── */
+        .footer-info {
             text-align: center;
-            padding: 40px 20px;
-            background: #0d0e12;
-            border-top: 1px solid var(--border);
+            margin-top: 50px;
+            padding: 30px;
+            background: #111;
+            border-radius: 20px;
         }
-        .discord-btn {
-            display: inline-flex; align-items: center; gap: 10px;
-            padding: 12px 28px;
-            background: transparent;
-            border: 2px solid var(--primary);
-            color: #fff;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 1em;
-            transition: all 0.25s;
-        }
-        .discord-btn:hover { background: var(--primary); box-shadow: 0 0 24px rgba(88,101,242,0.35); transform: scale(1.04); }
-        footer p { color: var(--muted); font-size: 0.85em; margin-top: 14px; }
 
-        @media(max-width:600px) {
+        .discord-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .discord-btn:hover {
+            background: var(--primary-color);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(88, 101, 242, 0.4);
+        }
+
+        .discord-icon {
+            width: 25px;
+            height: auto;
+        }
+
+
+        @media (max-width: 600px) {
             h1 { font-size: 1.8em; }
-            section { padding: 18px; }
-            .content-grid { flex-direction: column; }
+            section { padding: 15px; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <img src="https://i.ibb.co/KcT2psvc/logo.png" alt="לוגו" class="logo" onerror="this.style.display='none'">
+<img src="https://i.ibb.co/KcT2psvc/logo.png" alt="Logo" class="logo-img">
     <h1>השרת של זילבר</h1>
-    <p class="tagline">שרת מיינקראפט קהילתי ושיתופי</p>
-    <div class="ip-box" onclick="copyIP()">
-        <span>🌐</span> zilber.minecraft.pe
+    <div class="ip-box" id="ipAddress" onclick="copyIP()">
+        zilber.minecraft.pe
+        <span class="copy-tooltip" id="copyTooltip">הועתק!</span>
     </div>
-    <p class="ip-copy-hint">לחצו להעתקת ה-IP</p>
+    <p>לחצו על ה-IP כדי להעתיק אותו</p>
 </header>
-
-<div class="copy-toast" id="copyToast">✅ הועתק!</div>
 
 <div class="container">
 
-    <!-- ANNOUNCEMENTS + EVENTS (dynamic layout) -->
-    <section id="content-section">
-        <h2>📣 הודעות ואירועים</h2>
-        <div class="content-grid">
-            <div id="ann-block">
-                <h3 style="font-size:0.95em;color:var(--muted);margin-bottom:12px;">הודעות</h3>
-                <div id="announcements-list"><p class="empty-msg">טוען...</p></div>
-            </div>
-            <div id="ev-block">
-                <h3 style="font-size:0.95em;color:var(--muted);margin-bottom:12px;">אירועים</h3>
-                <div id="events-list"><p class="empty-msg">טוען...</p></div>
-            </div>
+    <!-- ── ANNOUNCEMENTS + EVENTS (hidden until data) ── -->
+    <section id="section-content" style="display:none">
+        <h2 id="content-title">📣 הודעות ואירועים</h2>
+        <div class="content-grid" id="content-grid">
+            <!-- filled by JS -->
         </div>
     </section>
 
-    <!-- SERVER SUMMARY -->
+    <!-- ── SERVER SUMMARY ── -->
     <section>
         <h2>📜 סיכום השרת</h2>
         <div class="summary-box">
             השרת הוא חברתי ושיתופי, והעולם נשאר קבוע – אין מחיקות או ריבים. כל השחקנים פועלים יחד לקידום הקהילה.
         </div>
-        <ul id="summary-rules">
-            <li><span class="rule-icon">🏙️</span><div><b>האי המרכזי:</b> הבנייה הראשית מתבצעת באי המרכזי של קוייליס.</div></li>
-            <li><span class="rule-icon">🏠</span><div><b>איים פרטיים:</b> כל שחקן רשאי לבחור אי פרטי נוסף לבנות בסיס אישי.</div></li>
-            <li><span class="rule-icon">🏟️</span><div><b>ארנה:</b> קיימת ארנה ייעודית לקרבות מסודרים.</div></li>
-            <li><span class="rule-icon">🧩</span><div><b>ערכי יסוד:</b> משחקים בשביל הכיף – לא להרוס לאחרים את החוויה.</div></li>
-        </ul>
+        <ul id="summary-rules"></ul>
     </section>
 
-    <!-- COMBAT RULES -->
+    <!-- ── COMBAT RULES ── -->
     <section>
         <h2>⚔️ חוקי לחימה ותקיפה</h2>
-        <ul id="combat-rules">
-            <li><span class="rule-icon">🚫</span><div><b>האי המרכזי:</b> חל איסור מוחלט על קרבות והתקפות בתוך שטח האי המרכזי.</div></li>
-            <li><span class="rule-icon">🛡️</span><div><b>הגנה על רכוש:</b> מותר לתקוף שחקנים רק מחוץ לגבולות האי המרכזי.</div></li>
-            <li><span class="rule-icon">🏝️</span><div><b>איים פרטיים:</b> באיים הפרטיים מותר להילחם.</div></li>
-            <li><span class="rule-icon">🏗️</span><div><b>איסור הריסה:</b> Griefing באי המרכזי נחשב עבירה חמורה.</div></li>
-        </ul>
+        <ul id="combat-rules"></ul>
     </section>
 
-    <!-- TECHNICAL RULES -->
+    <!-- ── TECHNICAL RULES ── -->
     <section>
         <h2>🛠️ חוקים טכניים וכלליים</h2>
-        <ul id="technical-rules">
-            <li><span class="rule-icon">⏳</span><div><b>לאגים:</b> אין לגרום לאגים בשרת בכוונה.</div></li>
-            <li><span class="rule-icon">🛠️</span><div><b>מבנים:</b> איסור מוחלט על הריסת מבנים ללא סיבה מוצדקת.</div></li>
-            <li><span class="rule-icon">🚫</span><div><b>צירוף שחקנים:</b> איסור על צירוף שחקנים ללא אישור 2 האדמינים ורוב חברי הקבוצה.</div></li>
-        </ul>
+        <ul id="technical-rules"></ul>
     </section>
 
-    <!-- PUNISHMENTS -->
+    <!-- ── PUNISHMENTS ── -->
     <section>
         <h2>⚖️ דרגות ענישה</h2>
+        <p>כל פגיעה באי המרכזי או מעבר על החוקים משתייכת לטבלה הבאה:</p>
         <table class="punishment-table">
             <thead><tr><th>עבירה</th><th>עונש</th></tr></thead>
-            <tbody id="punishment-tbody">
-                <tr><td>פעם ראשונה</td><td>Kill 💀</td></tr>
-                <tr><td>פעם שנייה</td><td>Kill 💀</td></tr>
-                <tr><td>פעם שלישית</td><td>Kill + Clear Inventory 🎒🔥</td></tr>
-                <tr><td>פעם רביעית</td><td>Ban ליום אחד ⛔</td></tr>
-                <tr><td>פעם חמישית</td><td>Ban ל-5 ימים 🚫</td></tr>
-                <tr><td>פעם שישית+</td><td>Ban לשבוע 🛑</td></tr>
-            </tbody>
+            <tbody id="pun-tbody"></tbody>
         </table>
     </section>
 
-    <!-- ADMINS -->
+    <!-- ── ADMINS ── -->
     <section>
         <h2>👑 הנהלת השרת</h2>
-        <p style="color:var(--muted);font-size:0.9em;margin-bottom:14px;">בכל בעיה, פנייה או דיווח – פנו לאדמינים:</p>
-        <div class="admins">
-            <div class="admin-card"><div class="admin-avatar">ע</div> עמית מטיאס</div>
-            <div class="admin-card"><div class="admin-avatar">ע</div> עידן זילברמן</div>
-        </div>
+        <p>בכל בעיה, פנייה או דיווח על נזק באי המרכזי - ניתן לפנות לאדמינים:</p>
+        <ul>
+            <li>עמית מטיאס</li>
+            <li>עידן זילברמן</li>
+        </ul>
     </section>
 
-</div>
+   
+        <div class="footer-info">
+            <a href="https://discord.gg/2wVemeKe" class="discord-btn" target="_blank">
+                <img src="https://pngimg.com/uploads/discord/discord_PNG3.png" alt="Discord Logo" class="discord-icon">
+                להצטרפות לדיסקורד
+            </a>
+            <p style="margin-top: 15px; font-size: 0.9em;">© 2026 השרת של זילבר</p>
+        </div>
 
-<footer>
-    <a href="https://discord.gg/2wVemeKe" class="discord-btn" target="_blank">
-        <img src="https://pngimg.com/uploads/discord/discord_PNG3.png" alt="Discord" style="width:22px">
-        להצטרפות לדיסקורד
-    </a>
-    <p>© 2026 השרת של זילבר</p>
-</footer>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
-function copyIP() {
-    navigator.clipboard.writeText('zilber.minecraft.pe').catch(() => {
-        const el = document.createElement('textarea');
-        el.value = 'zilber.minecraft.pe';
+document.addEventListener('DOMContentLoaded', function() {
+
+    firebase.initializeApp({
+        apiKey: "AIzaSyDlyDbpwcBcWvFnvYHb84dMEpaQFTjv-HY",
+        authDomain: "tester-69fa9.firebaseapp.com",
+        databaseURL: "https://tester-69fa9-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "tester-69fa9",
+        storageBucket: "tester-69fa9.firebasestorage.app",
+        messagingSenderId: "378563229004",
+        appId: "1:378563229004:web:5136b724eb84fd00e44be9"
+    });
+    var db = firebase.database();
+
+    /* ── COPY IP ── */
+    window.copyIP = function() {
+        var ipText = 'zilber.minecraft.pe';
+        var el = document.createElement('textarea');
+        el.value = ipText;
         document.body.appendChild(el);
         el.select();
         document.execCommand('copy');
         document.body.removeChild(el);
+        var ipBox = document.getElementById('ipAddress');
+        ipBox.classList.add('copied');
+        setTimeout(function(){ ipBox.classList.remove('copied'); }, 2000);
+    };
+
+    /* ══════════════════════════════
+       ANNOUNCEMENTS + EVENTS LAYOUT
+       ══════════════════════════════ */
+    var annData = null;
+    var evData  = null;
+
+    db.ref('announcements').on('value', function(snap) {
+        annData = snap.val();
+        renderContentSection();
     });
-    const toast = document.getElementById('copyToast');
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2200);
-}
+
+    db.ref('events').on('value', function(snap) {
+        evData = snap.val();
+        renderContentSection();
+    });
+
+    function renderContentSection() {
+        var hasAnn = annData && Object.keys(annData).length > 0;
+        var now = Date.now();
+        var activeEvents = [];
+        if (evData) {
+            Object.values(evData).forEach(function(e) {
+                if (!e.endDate || new Date(e.endDate + (e.endTime ? 'T'+e.endTime : '')).getTime() > now) {
+                    activeEvents.push(e);
+                }
+            });
+        }
+        var hasEv = activeEvents.length > 0;
+
+        var section = document.getElementById('section-content');
+        var grid    = document.getElementById('content-grid');
+        var title   = document.getElementById('content-title');
+
+        if (!hasAnn && !hasEv) {
+            section.style.display = 'none';
+            return;
+        }
+        section.style.display = 'block';
+        grid.innerHTML = '';
+
+        /* Dynamic title */
+        if (hasAnn && hasEv)  title.textContent = '📣 הודעות ואירועים';
+        else if (hasAnn)      title.textContent = '📢 הודעות';
+        else                  title.textContent = '🎯 אירועים';
+
+        /* Announcements column */
+        if (hasAnn) {
+            var annCol = document.createElement('div');
+            if (hasAnn && hasEv) {
+                var ct = document.createElement('div');
+                ct.className = 'content-col-title';
+                ct.textContent = '📢 הודעות';
+                annCol.appendChild(ct);
+            }
+            Object.values(annData).forEach(function(a) {
+                var item = document.createElement('div');
+                item.className = 'ann-item';
+                item.innerHTML =
+                    '<span>📢</span>' +
+                    '<div style="flex:1"><div>' + a.text + '</div>' +
+                    (a.date ? '<div class="ann-date">' + a.date + '</div>' : '') +
+                    '</div>';
+                annCol.appendChild(item);
+            });
+            grid.appendChild(annCol);
+        }
+
+        /* Events column */
+        if (hasEv) {
+            var evCol = document.createElement('div');
+            if (hasAnn && hasEv) {
+                var ct2 = document.createElement('div');
+                ct2.className = 'content-col-title';
+                ct2.textContent = '🎯 אירועים';
+                evCol.appendChild(ct2);
+            }
+            activeEvents.forEach(function(e) {
+                var item = document.createElement('div');
+                item.className = 'event-item';
+
+                var top = document.createElement('div');
+                top.className = 'event-top';
+
+                var nameSpan = document.createElement('strong');
+                nameSpan.textContent = e.name;
+
+                var countdownSpan = document.createElement('span');
+                countdownSpan.className = 'event-countdown';
+                countdownSpan.textContent = '⏱ ...';
+
+                var chevron = document.createElement('span');
+                chevron.className = 'event-chevron';
+                chevron.textContent = '▼';
+
+                top.appendChild(nameSpan);
+                if (e.timerTarget) top.appendChild(countdownSpan);
+                top.appendChild(chevron);
+
+                var details = document.createElement('div');
+                details.className = 'event-details';
+                var detHTML = '';
+                if (e.startDate) detHTML += '<p>📅 התחלה: ' + e.startDate + (e.startTime ? ' בשעה ' + e.startTime : '') + '</p>';
+                if (e.endDate)   detHTML += '<p>🏁 סיום: '   + e.endDate   + (e.endTime   ? ' בשעה ' + e.endTime   : '') + '</p>';
+                if (e.description) detHTML += '<p>📝 ' + e.description + '</p>';
+                details.innerHTML = detHTML;
+
+                item.appendChild(top);
+                item.appendChild(details);
+                item.addEventListener('click', function(){ item.classList.toggle('open'); });
+                evCol.appendChild(item);
+
+                /* Countdown */
+                if (e.timerTarget) {
+                    var target = new Date(e.timerTarget).getTime();
+                    (function(span, tgt) {
+                        function tick() {
+                            var diff = tgt - Date.now();
+                            if (diff <= 0) { span.textContent = '⏰ התחיל!'; return; }
+                            var d = Math.floor(diff / 86400000);
+                            var h = Math.floor((diff % 86400000) / 3600000);
+                            var m = Math.floor((diff % 3600000) / 60000);
+                            var s = Math.floor((diff % 60000) / 1000);
+                            span.textContent = '⏱ ' + (d > 0 ? d + 'ד ' : '') + h + ':' + pad(m) + ':' + pad(s);
+                            setTimeout(tick, 1000);
+                        }
+                        tick();
+                    })(countdownSpan, target);
+                }
+            });
+            grid.appendChild(evCol);
+        }
+    }
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    /* ══════════════════
+       RULES FROM FIREBASE
+       ══════════════════ */
+    function loadRules(fbPath, elId) {
+        db.ref(fbPath).on('value', function(snap) {
+            var el = document.getElementById(elId);
+            if (!el) return;
+            var data = snap.val();
+            if (!data) return;
+            el.innerHTML = Object.values(data).map(function(r) {
+                return '<li>' +
+                    (r.icon ? r.icon + ' ' : '') +
+                    (r.title ? '<b>' + r.title + ':</b> ' : '') +
+                    (r.text || '') +
+                    '</li>';
+            }).join('');
+        });
+    }
+
+    loadRules('rules/summary',   'summary-rules');
+    loadRules('rules/combat',    'combat-rules');
+    loadRules('rules/technical', 'technical-rules');
+
+    /* ══════════════════
+       PUNISHMENTS
+       ══════════════════ */
+    db.ref('rules/punishments').on('value', function(snap) {
+        var tbody = document.getElementById('pun-tbody');
+        var data = snap.val();
+        if (!data || !tbody) return;
+        tbody.innerHTML = Object.values(data).map(function(p) {
+            return '<tr><td>' + p.offense + '</td><td>' + p.penalty + '</td></tr>';
+        }).join('');
+    });
+
+});
 </script>
 </body>
 </html>
