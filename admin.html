@@ -43,7 +43,6 @@
         /* CARDS */
         .admin-card { background: var(--card); border-radius: 14px; border: 1px solid var(--border); padding: 22px 24px; margin-bottom: 20px; }
         h2 { font-family: 'Varela Round'; color: var(--primary); font-size: 1.15em; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
-        .h2-actions { margin-right: auto; display: flex; gap: 8px; }
 
         /* FORMS */
         .form-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; align-items: center; }
@@ -80,16 +79,28 @@
         /* PLAYER CARD */
         .player-card { background: var(--card2); border-radius: 10px; padding: 14px; margin-bottom: 12px; border: 1px solid var(--border); }
         .player-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-        .player-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; flex-shrink: 0; }
+        .player-avatar { width: 44px; height: 44px; border-radius: 8px; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; flex-shrink: 0; overflow: hidden; image-rendering: pixelated; }
+        .player-avatar img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
         .player-info { flex: 1; }
         .player-info strong { display: block; }
         .player-info small { color: var(--muted); font-size: 0.82em; }
         .notes-field { background: rgba(255,255,255,0.03); border: 1px dashed var(--border); color: var(--muted); font-size: 0.88em; border-radius: 6px; padding: 8px 10px; }
+        .mc-tag { display:inline-block; background:rgba(88,101,242,0.15); color:#a0a8d0; font-size:0.78em; padding:2px 8px; border-radius:20px; border:1px solid rgba(88,101,242,0.2); margin-top:2px; }
 
         /* DEFAULT RULES BANNER */
         .default-banner { background: rgba(59,165,92,0.08); border: 1px solid rgba(59,165,92,0.3); border-radius: 10px; padding: 14px 18px; margin-bottom: 18px; display: flex; align-items: center; gap: 14px; }
         .default-banner p { flex: 1; font-size: 0.9em; color: var(--muted); }
         .default-banner strong { color: var(--text); }
+
+        /* DYNAMIC CATEGORY CARD */
+        .cat-card { background: var(--card); border-radius: 14px; border: 1px solid var(--border); margin-bottom: 20px; overflow: hidden; }
+        .cat-card-header { display: flex; align-items: center; gap: 10px; padding: 16px 20px; background: rgba(88,101,242,0.07); border-bottom: 1px solid var(--border); }
+        .cat-card-header h3 { font-family: 'Varela Round'; color: var(--primary); font-size: 1em; flex: 1; margin: 0; }
+        .cat-card-body { padding: 18px 20px; }
+
+        /* NEW CATEGORY FORM */
+        .new-cat-box { background: rgba(88,101,242,0.06); border: 1px dashed rgba(88,101,242,0.35); border-radius: 12px; padding: 18px 20px; margin-bottom: 24px; }
+        .new-cat-box h3 { font-family: 'Varela Round'; color: var(--muted); font-size: 0.95em; margin-bottom: 12px; }
     </style>
 </head>
 <body>
@@ -163,11 +174,11 @@
                 <div class="admin-card">
                     <h2>👥 ניהול שחקנים</h2>
                     <div class="form-row">
-                        <input type="text" id="p-name" placeholder="שם שחקן">
-                        <input type="text" id="p-island" placeholder="אי (ראשי / פרטי / נפרד)">
+                        <input type="text" id="p-name" placeholder="שם תצוגה">
+                        <input type="text" id="p-mcuser" placeholder="שם משתמש מיינקראפט" dir="ltr" style="flex:1">
                         <button class="btn btn-blue" id="btn-player">+ הוסף</button>
                     </div>
-                    <p style="color:var(--muted);font-size:0.82em;margin-bottom:14px">💡 שדה ההערות פנימי – לא גלוי לשחקנים</p>
+                    <p style="color:var(--muted);font-size:0.82em;margin-bottom:14px">💡 שם המשתמש מיינקראפט משמש להצגת הסקין באתר. שדה ההערות פנימי – לא גלוי לשחקנים.</p>
                     <div id="player-list"></div>
                 </div>
             </section>
@@ -178,46 +189,24 @@
                 <!-- DEFAULT RULES LOADER -->
                 <div class="default-banner">
                     <div>📋</div>
-                    <p><strong>טעינת חוקי ברירת מחדל</strong><br>מחיקה ברורה של כל החוקים הקיימים והוספת כל החוקים המקוריים מהמסמך.</p>
+                    <p><strong>טעינת חוקי ברירת מחדל</strong><br>מחיקה של כל הקטגוריות הדינמיות והחוקים הקיימים, וטעינת החוקים המקוריים.</p>
                     <button class="btn btn-green" id="btn-load-defaults">טען חוקי ברירת מחדל</button>
                 </div>
 
-                <div class="admin-card" style="margin-bottom:20px">
-                    <h2>📜 סיכום השרת</h2>
+                <!-- NEW CATEGORY FORM -->
+                <div class="new-cat-box">
+                    <h3>➕ יצירת קטגוריה חדשה</h3>
                     <div class="form-row">
-                        <input type="text" id="ri-summary" placeholder="אמוג'י" style="flex:0 0 65px">
-                        <input type="text" id="rt-summary" placeholder="כותרת">
-                        <input type="text" id="rx-summary" placeholder="טקסט">
-                        <button class="btn btn-blue" data-rtype="summary">+ הוסף</button>
+                        <input type="text" id="cat-icon" placeholder="אמוג'י" style="flex:0 0 70px">
+                        <input type="text" id="cat-name" placeholder="שם הקטגוריה (למשל: חוקי כלכלה)">
+                        <button class="btn btn-blue" id="btn-add-cat">+ צור קטגוריה</button>
                     </div>
-                    <div id="rule-list-summary"></div>
                 </div>
 
-                <div class="admin-card" style="margin-bottom:20px">
-                    <h2>⚔️ חוקי לחימה</h2>
-                    <div class="form-row">
-                        <input type="text" id="ri-combat" placeholder="אמוג'י" style="flex:0 0 65px">
-                        <input type="text" id="rt-combat" placeholder="כותרת">
-                        <input type="text" id="rx-combat" placeholder="טקסט">
-                        <button class="btn btn-blue" data-rtype="combat">+ הוסף</button>
-                    </div>
-                    <div id="rule-list-combat"></div>
-                </div>
+                <!-- DYNAMIC CATEGORIES rendered here -->
+                <div id="dynamic-cats"></div>
 
-                <div class="admin-card">
-                    <h2>🛠️ חוקים טכניים</h2>
-                    <div class="form-row">
-                        <input type="text" id="ri-technical" placeholder="אמוג'י" style="flex:0 0 65px">
-                        <input type="text" id="rt-technical" placeholder="כותרת">
-                        <input type="text" id="rx-technical" placeholder="טקסט">
-                        <button class="btn btn-blue" data-rtype="technical">+ הוסף</button>
-                    </div>
-                    <div id="rule-list-technical"></div>
-                </div>
-            </section>
-
-            <!-- PUNISHMENTS -->
-            <section class="tab-section" id="tab-pun">
+                <!-- PUNISHMENTS inside rules tab -->
                 <div class="admin-card">
                     <h2>⚖️ דרגות ענישה</h2>
                     <div class="form-row">
@@ -226,6 +215,19 @@
                         <button class="btn btn-blue" id="btn-pun">+ הוסף</button>
                     </div>
                     <div id="pun-list"></div>
+                </div>
+            </section>
+
+            <!-- PUNISHMENTS (standalone tab) -->
+            <section class="tab-section" id="tab-pun">
+                <div class="admin-card">
+                    <h2>⚖️ דרגות ענישה</h2>
+                    <div class="form-row">
+                        <input type="text" id="pun-off2" placeholder="עבירה (למשל: פעם ראשונה)">
+                        <input type="text" id="pun-pen2" placeholder="עונש (למשל: Kill 💀)">
+                        <button class="btn btn-blue" id="btn-pun2">+ הוסף</button>
+                    </div>
+                    <div id="pun-list2"></div>
                 </div>
             </section>
 
@@ -251,25 +253,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* ── DEFAULT RULES DATA ── */
     var DEFAULT_RULES = {
-        summary: [
-            { icon:'🏙️', title:'האי המרכזי', text:'הבנייה הראשית מתבצעת באי המרכזי של קוייליס. שם מקימים את הבתים והבסיסים המרכזיים.' },
-            { icon:'🏠', title:'איים פרטיים', text:'כל שחקן רשאי לבחור אי פרטי נוסף (ללא שחקנים אחרים) כדי לבנות בו בסיס אישי ומבודד.' },
-            { icon:'🏟️', title:'ארנה', text:'קיימת ארנה ייעודית לקרבות מסודרים בה ניתן להילחם בחופשיות.' },
-            { icon:'🧩', title:'ערכי יסוד', text:'משחקים בשביל הכיף – לא להרוס לאחרים את החוויה.' },
-            { icon:'🏖️', title:'אי נפרד', text:'אם החלטתם לבחור באי נפרד (אי רחוק מהבסיס הראשי) אז אינכם מורשים להיכנס לבסיס הראשי או להתחיל לחימה כלשהי.' }
+        categories: [
+            { icon:'📜', name:'סיכום השרת' },
+            { icon:'⚔️', name:'חוקי לחימה' },
+            { icon:'🛠️', name:'חוקים טכניים' }
         ],
-        combat: [
-            { icon:'🚫', title:'האי המרכזי', text:'חל איסור מוחלט על קרבות והתקפות בתוך שטח האי המרכזי.' },
-            { icon:'🛡️', title:'הגנה על רכוש', text:'מותר לתקוף שחקנים מהאי הראשי רק מחוץ לגבולותיו, ובתנאי שאין פגיעה במבנים או בשחקנים אחרים שלא קשורים לקרב.' },
-            { icon:'🏝️', title:'איים פרטיים', text:'באיים הפרטיים מותר להילחם או להתקיף שחקנים.' },
-            { icon:'🏗️', title:'איסור הריסה', text:'כל פגיעה (Griefing) באי המרכזי נחשבת לעבירה חמורה ותגרור ענישה מיידית.' }
-        ],
-        technical: [
-            { icon:'⏳', title:'לאגים', text:'אין לגרום לאגים בשרת בכוונה (מכונות רדסטון מוגזמות, לופים וכו\').' },
-            { icon:'🛠️', title:'מבנים', text:'איסור מוחלט על הריסת מבנים ללא סיבה מוצדקת (גם מחוץ לאי המרכזי).' },
-            { icon:'🚫', title:'צירוף שחקנים', text:'חל איסור מוחלט על צירוף שחקנים חדשים ללא אישור 2 האדמינים ורוב חברי קבוצה.' },
-            { icon:'🤝', title:'שיתוף פעולה', text:'מי שרוצה יכול להמשיך לפתח את האי הפרטי שלו ולהיות מבודד, אך עליו לכבד את מרחב השאר.' }
-        ],
+        rules: {
+            'סיכום השרת': [
+                { icon:'🏙️', title:'האי המרכזי', text:'הבנייה הראשית מתבצעת באי המרכזי של קוייליס. שם מקימים את הבתים והבסיסים המרכזיים.' },
+                { icon:'🏠', title:'איים פרטיים', text:'כל שחקן רשאי לבחור אי פרטי נוסף (ללא שחקנים אחרים) כדי לבנות בו בסיס אישי ומבודד.' },
+                { icon:'🏟️', title:'ארנה', text:'קיימת ארנה ייעודית לקרבות מסודרים בה ניתן להילחם בחופשיות.' },
+                { icon:'🧩', title:'ערכי יסוד', text:'משחקים בשביל הכיף – לא להרוס לאחרים את החוויה.' },
+                { icon:'🏖️', title:'אי נפרד', text:'אם החלטתם לבחור באי נפרד (אי רחוק מהבסיס הראשי) אז אינכם מורשים להיכנס לבסיס הראשי או להתחיל לחימה כלשהי.' }
+            ],
+            'חוקי לחימה': [
+                { icon:'🚫', title:'האי המרכזי', text:'חל איסור מוחלט על קרבות והתקפות בתוך שטח האי המרכזי.' },
+                { icon:'🛡️', title:'הגנה על רכוש', text:'מותר לתקוף שחקנים מהאי הראשי רק מחוץ לגבולותיו, ובתנאי שאין פגיעה במבנים או בשחקנים אחרים שלא קשורים לקרב.' },
+                { icon:'🏝️', title:'איים פרטיים', text:'באיים הפרטיים מותר להילחם או להתקיף שחקנים.' },
+                { icon:'🏗️', title:'איסור הריסה', text:'כל פגיעה (Griefing) באי המרכזי נחשבת לעבירה חמורה ותגרור ענישה מיידית.' }
+            ],
+            'חוקים טכניים': [
+                { icon:'⏳', title:'לאגים', text:'אין לגרום לאגים בשרת בכוונה (מכונות רדסטון מוגזמות, לופים וכו\').' },
+                { icon:'🛠️', title:'מבנים', text:'איסור מוחלט על הריסת מבנים ללא סיבה מוצדקת (גם מחוץ לאי המרכזי).' },
+                { icon:'🚫', title:'צירוף שחקנים', text:'חל איסור מוחלט על צירוף שחקנים חדשים ללא אישור 2 האדמינים ורוב חברי קבוצה.' },
+                { icon:'🤝', title:'שיתוף פעולה', text:'מי שרוצה יכול להמשיך לפתח את האי הפרטי שלו ולהיות מבודד, אך עליו לכבד את מרחב השאר.' }
+            ]
+        },
         punishments: [
             { offense:'פעם ראשונה',      penalty:'Kill 💀' },
             { offense:'פעם שנייה',       penalty:'Kill 💀' },
@@ -309,8 +318,9 @@ document.addEventListener('DOMContentLoaded', function() {
         setupAnnouncements();
         setupEvents();
         setupPlayers();
-        ['summary','combat','technical'].forEach(setupRules);
-        setupPunishments();
+        setupDynamicCategories();
+        setupPunishments('pun-list',  'pun-off',  'pun-pen',  'btn-pun');
+        setupPunishments('pun-list2', 'pun-off2', 'pun-pen2', 'btn-pun2');
         setupDefaultLoader();
     }
 
@@ -322,7 +332,6 @@ document.addEventListener('DOMContentLoaded', function() {
         b.onclick = function(){ if(confirm('למחוק?')) db.ref(path).remove(); };
         return b;
     }
-
     function editBtn(onClick) {
         var b = document.createElement('button');
         b.className = 'btn btn-edit btn-sm';
@@ -330,7 +339,6 @@ document.addEventListener('DOMContentLoaded', function() {
         b.onclick = onClick;
         return b;
     }
-
     function saveBtn(onClick) {
         var b = document.createElement('button');
         b.className = 'btn btn-green btn-sm';
@@ -338,7 +346,6 @@ document.addEventListener('DOMContentLoaded', function() {
         b.onclick = onClick;
         return b;
     }
-
     function cancelBtn(onClick) {
         var b = document.createElement('button');
         b.className = 'btn btn-sm';
@@ -358,42 +365,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 var a = d[id];
                 var row = document.createElement('div');
                 row.className = 'item-row';
-
                 var textSpan = document.createElement('span');
                 textSpan.className = 'item-text';
                 textSpan.innerHTML = '📢 ' + a.text + ' <small>' + (a.date||'') + '</small>';
-
                 var btns = document.createElement('div');
                 btns.className = 'row-btns';
-
                 btns.appendChild(editBtn(function() {
                     row.classList.add('editing');
                     var input = document.createElement('input');
-                    input.type = 'text';
-                    input.value = a.text;
-                    input.style.flex = '1';
+                    input.type = 'text'; input.value = a.text; input.style.flex = '1';
                     row.replaceChild(input, textSpan);
                     btns.innerHTML = '';
-                    btns.appendChild(saveBtn(function() {
-                        db.ref('announcements/' + id).update({ text: input.value.trim() });
-                    }));
-                    btns.appendChild(cancelBtn(function() {
-                        db.ref('announcements').once('value'); // triggers refresh
-                        location.reload(); // simple reset
-                    }));
+                    btns.appendChild(saveBtn(function(){ db.ref('announcements/'+id).update({text:input.value.trim()}); }));
+                    btns.appendChild(cancelBtn(function(){ location.reload(); }));
                 }));
-                btns.appendChild(delBtn('announcements/' + id));
-
-                row.appendChild(textSpan);
-                row.appendChild(btns);
+                btns.appendChild(delBtn('announcements/'+id));
+                row.appendChild(textSpan); row.appendChild(btns);
                 c.appendChild(row);
             });
         });
-
         document.getElementById('btn-ann').onclick = function() {
             var t = document.getElementById('ann-text').value.trim();
             if (!t) return;
-            db.ref('announcements').push({ text: t, date: new Date().toLocaleDateString('he-IL') });
+            db.ref('announcements').push({ text:t, date:new Date().toLocaleDateString('he-IL') });
             document.getElementById('ann-text').value = '';
         };
     }
@@ -408,69 +402,83 @@ document.addEventListener('DOMContentLoaded', function() {
                 var e = d[id];
                 var row = document.createElement('div');
                 row.className = 'item-row';
-
                 var textSpan = document.createElement('span');
                 textSpan.className = 'item-text';
-                textSpan.innerHTML = '🎯 <b>' + e.name + '</b> | ' +
-                    (e.startDate||'') + ' ' + (e.startTime||'') + ' – ' + (e.endDate||'') + ' ' + (e.endTime||'');
-
+                textSpan.innerHTML = '🎯 <b>' + e.name + '</b> | ' + (e.startDate||'') + ' ' + (e.startTime||'') + ' – ' + (e.endDate||'') + ' ' + (e.endTime||'');
                 var btns = document.createElement('div');
                 btns.className = 'row-btns';
-
-                btns.appendChild(editBtn((function(eid, ev){
-                    return function() {
-                        row.classList.add('editing');
-                        var fields = document.createElement('div');
-                        fields.className = 'item-edit-fields';
-                        fields.innerHTML =
-                            '<input type="text" value="' + (ev.name||'') + '" placeholder="שם" id="ee-name-'+eid+'">' +
-                            '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
-                            '<input type="date" value="' + (ev.startDate||'') + '" id="ee-sd-'+eid+'">' +
-                            '<input type="time" value="' + (ev.startTime||'') + '" id="ee-st-'+eid+'">' +
-                            '<input type="date" value="' + (ev.endDate||'') + '" id="ee-ed-'+eid+'">' +
-                            '<input type="time" value="' + (ev.endTime||'') + '" id="ee-et-'+eid+'">' +
-                            '</div>' +
-                            '<input type="text" value="' + (ev.description||'') + '" placeholder="תיאור" id="ee-desc-'+eid+'">';
-                        row.replaceChild(fields, textSpan);
-                        btns.innerHTML = '';
-                        btns.appendChild(saveBtn(function() {
-                            db.ref('events/' + eid).update({
-                                name: document.getElementById('ee-name-'+eid).value,
-                                startDate: document.getElementById('ee-sd-'+eid).value,
-                                startTime: document.getElementById('ee-st-'+eid).value,
-                                endDate: document.getElementById('ee-ed-'+eid).value,
-                                endTime: document.getElementById('ee-et-'+eid).value,
-                                description: document.getElementById('ee-desc-'+eid).value
-                            });
-                        }));
-                        btns.appendChild(delBtn('events/' + eid));
-                    };
-                })(id, e)));
-
-                btns.appendChild(delBtn('events/' + id));
-                row.appendChild(textSpan);
-                row.appendChild(btns);
+                btns.appendChild(editBtn((function(eid,ev){ return function() {
+                    row.classList.add('editing');
+                    var fields = document.createElement('div');
+                    fields.className = 'item-edit-fields';
+                    fields.innerHTML =
+                        '<input type="text" value="'+(ev.name||'')+'" placeholder="שם" id="ee-name-'+eid+'">' +
+                        '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+                        '<input type="date" value="'+(ev.startDate||'')+'" id="ee-sd-'+eid+'">' +
+                        '<input type="time" value="'+(ev.startTime||'')+'" id="ee-st-'+eid+'">' +
+                        '<input type="date" value="'+(ev.endDate||'')+'" id="ee-ed-'+eid+'">' +
+                        '<input type="time" value="'+(ev.endTime||'')+'" id="ee-et-'+eid+'">' +
+                        '</div>' +
+                        '<input type="text" value="'+(ev.description||'')+'" placeholder="תיאור" id="ee-desc-'+eid+'">';
+                    row.replaceChild(fields, textSpan);
+                    btns.innerHTML = '';
+                    btns.appendChild(saveBtn(function(){
+                        db.ref('events/'+eid).update({
+                            name: document.getElementById('ee-name-'+eid).value,
+                            startDate: document.getElementById('ee-sd-'+eid).value,
+                            startTime: document.getElementById('ee-st-'+eid).value,
+                            endDate: document.getElementById('ee-ed-'+eid).value,
+                            endTime: document.getElementById('ee-et-'+eid).value,
+                            description: document.getElementById('ee-desc-'+eid).value
+                        });
+                    }));
+                    btns.appendChild(delBtn('events/'+eid));
+                }; })(id,e)));
+                btns.appendChild(delBtn('events/'+id));
+                row.appendChild(textSpan); row.appendChild(btns);
                 c.appendChild(row);
             });
         });
-
         document.getElementById('btn-ev').onclick = function() {
             var name = document.getElementById('ev-name').value.trim();
             if (!name) return;
-            var sd = document.getElementById('ev-sd').value, st = document.getElementById('ev-st').value;
-            var ed = document.getElementById('ev-ed').value, et = document.getElementById('ev-et').value;
-            var desc = document.getElementById('ev-desc').value.trim();
-            var choice = document.getElementById('ev-timer').value;
-            var timerTarget = null;
-            if (choice==='start' && sd && st) timerTarget = new Date(sd+'T'+st).toISOString();
-            else if (choice==='end' && ed && et) timerTarget = new Date(ed+'T'+et).toISOString();
-            db.ref('events').push({ name:name, startDate:sd, startTime:st, endDate:ed, endTime:et, description:desc, timerTarget:timerTarget });
+            var sd=document.getElementById('ev-sd').value, st=document.getElementById('ev-st').value;
+            var ed=document.getElementById('ev-ed').value, et=document.getElementById('ev-et').value;
+            var desc=document.getElementById('ev-desc').value.trim();
+            var choice=document.getElementById('ev-timer').value;
+            var timerTarget=null;
+            if (choice==='start'&&sd&&st) timerTarget=new Date(sd+'T'+st).toISOString();
+            else if (choice==='end'&&ed&&et) timerTarget=new Date(ed+'T'+et).toISOString();
+            db.ref('events').push({name,startDate:sd,startTime:st,endDate:ed,endTime:et,description:desc,timerTarget});
             ['ev-name','ev-sd','ev-st','ev-ed','ev-et','ev-desc'].forEach(function(i){ document.getElementById(i).value=''; });
-            document.getElementById('ev-timer').value = 'none';
+            document.getElementById('ev-timer').value='none';
         };
     }
 
     /* ── PLAYERS ── */
+    function skinUrl(mcuser) {
+        return mcuser ? 'https://api.mineatar.io/face/' + encodeURIComponent(mcuser) + '?scale=8' : null;
+    }
+
+    function buildAvatar(mcuser, fallbackLetter) {
+        var av = document.createElement('div');
+        av.className = 'player-avatar';
+        if (mcuser) {
+            var img = document.createElement('img');
+            img.src = skinUrl(mcuser);
+            img.alt = mcuser;
+            img.onerror = function() {
+                // fallback to minotar
+                img.onerror = function() { av.removeChild(img); av.textContent = fallbackLetter; };
+                img.src = 'https://minotar.net/avatar/' + encodeURIComponent(mcuser) + '/44';
+            };
+            av.appendChild(img);
+        } else {
+            av.textContent = fallbackLetter;
+        }
+        return av;
+    }
+
     function setupPlayers() {
         db.ref('players').on('value', function(snap) {
             var c = document.getElementById('player-list');
@@ -480,200 +488,275 @@ document.addEventListener('DOMContentLoaded', function() {
                 var p = d[id];
                 var card = document.createElement('div');
                 card.className = 'player-card';
-
                 var hdr = document.createElement('div');
                 hdr.className = 'player-header';
 
-                var av = document.createElement('div');
-                av.className = 'player-avatar';
-                av.textContent = (p.name||'?')[0];
+                var av = buildAvatar(p.mcuser, (p.name||'?')[0].toUpperCase());
 
                 var info = document.createElement('div');
                 info.className = 'player-info';
-                info.innerHTML = '<strong>' + (p.name||'') + '</strong><small>' + (p.island||'ללא אי') + '</small>';
+                info.innerHTML = '<strong>'+(p.name||'')+'</strong>' +
+                    (p.mcuser ? '<span class="mc-tag">⛏ '+p.mcuser+'</span>' : '<small>ללא שם משתמש</small>');
 
                 var btns = document.createElement('div');
                 btns.className = 'row-btns';
-                btns.appendChild(editBtn((function(pid, pp){
-                    return function() {
-                        info.innerHTML =
-                            '<input type="text" value="' + (pp.name||'') + '" id="pn-'+pid+'" placeholder="שם" style="margin-bottom:4px">' +
-                            '<input type="text" value="' + (pp.island||'') + '" id="pi-'+pid+'" placeholder="אי">';
-                        btns.innerHTML = '';
-                        btns.appendChild(saveBtn(function() {
-                            db.ref('players/'+pid).update({
-                                name: document.getElementById('pn-'+pid).value.trim(),
-                                island: document.getElementById('pi-'+pid).value.trim()
-                            });
-                        }));
-                        btns.appendChild(delBtn('players/'+pid));
-                    };
-                })(id, p)));
-                btns.appendChild(delBtn('players/' + id));
-
-                hdr.appendChild(av);
-                hdr.appendChild(info);
-                hdr.appendChild(btns);
-
+                btns.appendChild(editBtn((function(pid,pp,avEl){ return function() {
+                    info.innerHTML =
+                        '<input type="text" value="'+(pp.name||'')+'" id="pn-'+pid+'" placeholder="שם תצוגה" style="margin-bottom:4px">' +
+                        '<input type="text" value="'+(pp.mcuser||'')+'" id="pmc-'+pid+'" placeholder="שם משתמש מיינקראפט" dir="ltr">';
+                    btns.innerHTML = '';
+                    btns.appendChild(saveBtn(function(){
+                        var newMc = document.getElementById('pmc-'+pid).value.trim();
+                        db.ref('players/'+pid).update({
+                            name: document.getElementById('pn-'+pid).value.trim(),
+                            mcuser: newMc
+                        });
+                    }));
+                    btns.appendChild(delBtn('players/'+pid));
+                }; })(id,p,av)));
+                btns.appendChild(delBtn('players/'+id));
+                hdr.appendChild(av); hdr.appendChild(info); hdr.appendChild(btns);
                 var notes = document.createElement('textarea');
                 notes.className = 'notes-field';
                 notes.placeholder = 'הערות פנימיות (לא גלויות לשחקנים)...';
                 notes.value = p.notes || '';
-                notes.onblur = (function(pid){ return function(){ db.ref('players/'+pid).update({notes: notes.value}); }; })(id);
-
-                card.appendChild(hdr);
-                card.appendChild(notes);
+                notes.onblur = (function(pid){ return function(){ db.ref('players/'+pid).update({notes:notes.value}); }; })(id);
+                card.appendChild(hdr); card.appendChild(notes);
                 c.appendChild(card);
             });
         });
-
         document.getElementById('btn-player').onclick = function() {
             var name = document.getElementById('p-name').value.trim();
             if (!name) return;
-            db.ref('players').push({ name:name, island:document.getElementById('p-island').value.trim(), notes:'' });
-            document.getElementById('p-name').value = '';
-            document.getElementById('p-island').value = '';
+            db.ref('players').push({
+                name: name,
+                mcuser: document.getElementById('p-mcuser').value.trim(),
+                notes: ''
+            });
+            document.getElementById('p-name').value='';
+            document.getElementById('p-mcuser').value='';
         };
     }
 
-    /* ── RULES ── */
-    function setupRules(type) {
-        db.ref('rules/' + type).on('value', function(snap) {
-            var c = document.getElementById('rule-list-' + type);
-            if (!c) return;
-            c.innerHTML = '';
+    /* ══════════════════════════════════════════
+       DYNAMIC CATEGORIES
+       ══════════════════════════════════════════ */
+
+    var catListeners = {}; // track active listeners per category id
+
+    function setupDynamicCategories() {
+        /* Add category button */
+        document.getElementById('btn-add-cat').onclick = function() {
+            var icon = document.getElementById('cat-icon').value.trim();
+            var name = document.getElementById('cat-name').value.trim();
+            if (!name) return;
+            db.ref('rule_categories').push({ icon:icon, name:name, order: Date.now() });
+            document.getElementById('cat-icon').value='';
+            document.getElementById('cat-name').value='';
+        };
+
+        /* Listen to categories list */
+        db.ref('rule_categories').on('value', function(snap) {
+            var container = document.getElementById('dynamic-cats');
+            container.innerHTML = '';
+            // Remove old listeners
+            Object.keys(catListeners).forEach(function(cid){
+                db.ref('rule_categories/'+cid+'/rules').off('value', catListeners[cid]);
+            });
+            catListeners = {};
+
             var d = snap.val() || {};
-            Object.keys(d).forEach(function(id) {
-                var r = d[id];
-                var row = document.createElement('div');
-                row.className = 'item-row';
+            // Sort by order
+            var sorted = Object.keys(d).sort(function(a,b){ return (d[a].order||0)-(d[b].order||0); });
 
-                var textSpan = document.createElement('span');
-                textSpan.className = 'item-text';
-                textSpan.innerHTML = (r.icon||'') + ' <b>' + (r.title||'') + '</b>' + (r.text ? ': ' + r.text : '');
-
-                var btns = document.createElement('div');
-                btns.className = 'row-btns';
-
-                btns.appendChild(editBtn((function(rid, rr, rtype){
-                    return function() {
-                        row.classList.add('editing');
-                        var fields = document.createElement('div');
-                        fields.className = 'item-edit-fields';
-                        fields.innerHTML =
-                            '<div style="display:flex;gap:6px">' +
-                            '<input type="text" value="' + (rr.icon||'') + '" id="rei-'+rid+'" placeholder="אמוג\'י" style="flex:0 0 60px">' +
-                            '<input type="text" value="' + (rr.title||'') + '" id="ret-'+rid+'" placeholder="כותרת">' +
-                            '</div>' +
-                            '<input type="text" value="' + (rr.text||'') + '" id="rex-'+rid+'" placeholder="טקסט">';
-                        row.replaceChild(fields, textSpan);
-                        btns.innerHTML = '';
-                        btns.appendChild(saveBtn(function() {
-                            db.ref('rules/'+rtype+'/'+rid).update({
-                                icon: document.getElementById('rei-'+rid).value.trim(),
-                                title: document.getElementById('ret-'+rid).value.trim(),
-                                text: document.getElementById('rex-'+rid).value.trim()
-                            });
-                        }));
-                        btns.appendChild(delBtn('rules/'+rtype+'/'+rid));
-                    };
-                })(id, r, type)));
-
-                btns.appendChild(delBtn('rules/' + type + '/' + id));
-                row.appendChild(textSpan);
-                row.appendChild(btns);
-                c.appendChild(row);
+            sorted.forEach(function(catId) {
+                var cat = d[catId];
+                var card = buildCategoryCard(catId, cat);
+                container.appendChild(card);
             });
         });
-
-        var addBtn = document.querySelector('[data-rtype="' + type + '"]');
-        if (addBtn) {
-            addBtn.onclick = function() {
-                var icon  = document.getElementById('ri-'+type).value.trim();
-                var title = document.getElementById('rt-'+type).value.trim();
-                var text  = document.getElementById('rx-'+type).value.trim();
-                if (!title && !text) return;
-                db.ref('rules/'+type).push({ icon:icon, title:title, text:text });
-                ['ri-','rt-','rx-'].forEach(function(p){ document.getElementById(p+type).value=''; });
-            };
-        }
     }
 
-    /* ── PUNISHMENTS ── */
-    function setupPunishments() {
+    function buildCategoryCard(catId, cat) {
+        var card = document.createElement('div');
+        card.className = 'cat-card';
+
+        /* Header */
+        var hdr = document.createElement('div');
+        hdr.className = 'cat-card-header';
+
+        var title = document.createElement('h3');
+        title.textContent = (cat.icon||'') + ' ' + (cat.name||'');
+
+        var hdrBtns = document.createElement('div');
+        hdrBtns.style.cssText = 'display:flex;gap:6px';
+
+        /* Edit category name/icon */
+        hdrBtns.appendChild(editBtn(function() {
+            var iconInp = document.createElement('input');
+            iconInp.type='text'; iconInp.value=cat.icon||''; iconInp.placeholder='אמוג\'י';
+            iconInp.style.cssText='flex:0 0 60px;background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 8px';
+            var nameInp = document.createElement('input');
+            nameInp.type='text'; nameInp.value=cat.name||''; nameInp.placeholder='שם קטגוריה';
+            nameInp.style.cssText='flex:1;background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 8px';
+            hdr.replaceChild(iconInp, title);
+            hdr.insertBefore(nameInp, hdrBtns);
+            hdrBtns.innerHTML='';
+            hdrBtns.appendChild(saveBtn(function(){
+                db.ref('rule_categories/'+catId).update({icon:iconInp.value.trim(), name:nameInp.value.trim()});
+            }));
+        }));
+
+        /* Delete entire category */
+        var delCatBtn = document.createElement('button');
+        delCatBtn.className = 'btn btn-red btn-sm';
+        delCatBtn.textContent = '🗑️ מחק קטגוריה';
+        delCatBtn.onclick = function() {
+            if (confirm('למחוק את הקטגוריה "' + cat.name + '" וכל החוקים שלה?')) {
+                db.ref('rule_categories/'+catId).remove();
+            }
+        };
+        hdrBtns.appendChild(delCatBtn);
+
+        hdr.appendChild(title);
+        hdr.appendChild(hdrBtns);
+
+        /* Body */
+        var body = document.createElement('div');
+        body.className = 'cat-card-body';
+
+        /* Add rule form */
+        var addRow = document.createElement('div');
+        addRow.className = 'form-row';
+        var iconF  = document.createElement('input'); iconF.type='text';  iconF.placeholder="אמוג'י"; iconF.style.cssText='flex:0 0 65px';
+        var titleF = document.createElement('input'); titleF.type='text'; titleF.placeholder='כותרת';
+        var textF  = document.createElement('input'); textF.type='text';  textF.placeholder='טקסט';
+        var addRuleBtn = document.createElement('button');
+        addRuleBtn.className='btn btn-blue btn-sm'; addRuleBtn.textContent='+ הוסף חוק';
+        addRuleBtn.onclick = function() {
+            var t=titleF.value.trim(), x=textF.value.trim();
+            if (!t && !x) return;
+            db.ref('rule_categories/'+catId+'/rules').push({icon:iconF.value.trim(),title:t,text:x});
+            iconF.value=''; titleF.value=''; textF.value='';
+        };
+        addRow.appendChild(iconF); addRow.appendChild(titleF); addRow.appendChild(textF); addRow.appendChild(addRuleBtn);
+        body.appendChild(addRow);
+
+        /* Rules list */
+        var rulesList = document.createElement('div');
+        rulesList.style.marginTop='10px';
+        body.appendChild(rulesList);
+
+        /* Listen to rules */
+        var listener = db.ref('rule_categories/'+catId+'/rules').on('value', function(snap) {
+            rulesList.innerHTML='';
+            var d = snap.val() || {};
+            Object.keys(d).forEach(function(rid) {
+                var r = d[rid];
+                var row = document.createElement('div');
+                row.className='item-row';
+                var textSpan = document.createElement('span');
+                textSpan.className='item-text';
+                textSpan.innerHTML=(r.icon||'')+' <b>'+(r.title||'')+'</b>'+(r.text?': '+r.text:'');
+                var btns = document.createElement('div');
+                btns.className='row-btns';
+                btns.appendChild(editBtn((function(rid2,rr){ return function(){
+                    row.classList.add('editing');
+                    var fields=document.createElement('div'); fields.className='item-edit-fields';
+                    fields.innerHTML=
+                        '<div style="display:flex;gap:6px">'+
+                        '<input type="text" value="'+(rr.icon||'')+'" id="rei-'+rid2+'" placeholder="אמוג\'י" style="flex:0 0 60px">'+
+                        '<input type="text" value="'+(rr.title||'')+'" id="ret-'+rid2+'" placeholder="כותרת">'+
+                        '</div>'+
+                        '<input type="text" value="'+(rr.text||'')+'" id="rex-'+rid2+'" placeholder="טקסט">';
+                    row.replaceChild(fields,textSpan);
+                    btns.innerHTML='';
+                    btns.appendChild(saveBtn(function(){
+                        db.ref('rule_categories/'+catId+'/rules/'+rid2).update({
+                            icon:document.getElementById('rei-'+rid2).value.trim(),
+                            title:document.getElementById('ret-'+rid2).value.trim(),
+                            text:document.getElementById('rex-'+rid2).value.trim()
+                        });
+                    }));
+                    btns.appendChild(delBtn('rule_categories/'+catId+'/rules/'+rid2));
+                };})(rid,r)));
+                btns.appendChild(delBtn('rule_categories/'+catId+'/rules/'+rid));
+                row.appendChild(textSpan); row.appendChild(btns);
+                rulesList.appendChild(row);
+            });
+        });
+        catListeners[catId] = listener;
+
+        card.appendChild(hdr);
+        card.appendChild(body);
+        return card;
+    }
+
+    /* ── PUNISHMENTS (reusable for both instances) ── */
+    function setupPunishments(listId, offId, penId, btnId) {
         db.ref('rules/punishments').on('value', function(snap) {
-            var c = document.getElementById('pun-list');
-            c.innerHTML = '';
+            var c = document.getElementById(listId);
+            if (!c) return;
+            c.innerHTML='';
             var d = snap.val() || {};
             Object.keys(d).forEach(function(id) {
                 var p = d[id];
-                var row = document.createElement('div');
-                row.className = 'item-row';
-
-                var textSpan = document.createElement('span');
-                textSpan.className = 'item-text';
-                textSpan.innerHTML = '⚖️ <b>' + p.offense + '</b> → ' + p.penalty;
-
-                var btns = document.createElement('div');
-                btns.className = 'row-btns';
-
-                btns.appendChild(editBtn((function(pid, pp){
-                    return function() {
-                        row.classList.add('editing');
-                        var fields = document.createElement('div');
-                        fields.className = 'item-edit-fields';
-                        fields.innerHTML =
-                            '<input type="text" value="' + pp.offense + '" id="po-'+pid+'" placeholder="עבירה">' +
-                            '<input type="text" value="' + pp.penalty + '" id="pp-'+pid+'" placeholder="עונש">';
-                        row.replaceChild(fields, textSpan);
-                        btns.innerHTML = '';
-                        btns.appendChild(saveBtn(function() {
-                            db.ref('rules/punishments/'+pid).update({
-                                offense: document.getElementById('po-'+pid).value.trim(),
-                                penalty: document.getElementById('pp-'+pid).value.trim()
-                            });
-                        }));
-                        btns.appendChild(delBtn('rules/punishments/'+pid));
-                    };
-                })(id, p)));
-
-                btns.appendChild(delBtn('rules/punishments/' + id));
-                row.appendChild(textSpan);
-                row.appendChild(btns);
+                var row = document.createElement('div'); row.className='item-row';
+                var textSpan = document.createElement('span'); textSpan.className='item-text';
+                textSpan.innerHTML='⚖️ <b>'+p.offense+'</b> → '+p.penalty;
+                var btns = document.createElement('div'); btns.className='row-btns';
+                btns.appendChild(editBtn((function(pid,pp){ return function(){
+                    row.classList.add('editing');
+                    var fields=document.createElement('div'); fields.className='item-edit-fields';
+                    fields.innerHTML=
+                        '<input type="text" value="'+pp.offense+'" id="po-'+pid+'" placeholder="עבירה">'+
+                        '<input type="text" value="'+pp.penalty+'" id="pp-'+pid+'" placeholder="עונש">';
+                    row.replaceChild(fields,textSpan);
+                    btns.innerHTML='';
+                    btns.appendChild(saveBtn(function(){
+                        db.ref('rules/punishments/'+pid).update({
+                            offense:document.getElementById('po-'+pid).value.trim(),
+                            penalty:document.getElementById('pp-'+pid).value.trim()
+                        });
+                    }));
+                    btns.appendChild(delBtn('rules/punishments/'+pid));
+                };})(id,p)));
+                btns.appendChild(delBtn('rules/punishments/'+id));
+                row.appendChild(textSpan); row.appendChild(btns);
                 c.appendChild(row);
             });
         });
-
-        document.getElementById('btn-pun').onclick = function() {
-            var off = document.getElementById('pun-off').value.trim();
-            var pen = document.getElementById('pun-pen').value.trim();
-            if (!off || !pen) return;
-            db.ref('rules/punishments').push({ offense:off, penalty:pen });
-            document.getElementById('pun-off').value = '';
-            document.getElementById('pun-pen').value = '';
+        document.getElementById(btnId).onclick = function() {
+            var off=document.getElementById(offId).value.trim();
+            var pen=document.getElementById(penId).value.trim();
+            if (!off||!pen) return;
+            db.ref('rules/punishments').push({offense:off,penalty:pen});
+            document.getElementById(offId).value='';
+            document.getElementById(penId).value='';
         };
     }
 
     /* ── DEFAULT RULES LOADER ── */
     function setupDefaultLoader() {
         document.getElementById('btn-load-defaults').onclick = function() {
-            if (!confirm('האם למחוק את כל החוקים הקיימים ולטעון את חוקי ברירת המחדל?')) return;
-            var updates = {};
-            updates['rules/summary']     = null;
-            updates['rules/combat']      = null;
-            updates['rules/technical']   = null;
-            updates['rules/punishments'] = null;
-            db.ref().update(updates, function() {
-                var types = ['summary','combat','technical'];
-                types.forEach(function(type) {
-                    DEFAULT_RULES[type].forEach(function(rule) {
-                        db.ref('rules/'+type).push(rule);
+            if (!confirm('האם למחוק את כל הקטגוריות הקיימות ולטעון את חוקי ברירת המחדל?')) return;
+            // Clear everything
+            db.ref('rule_categories').remove(function() {
+                db.ref('rules/punishments').remove(function() {
+                    // Write categories + rules
+                    DEFAULT_RULES.categories.forEach(function(cat) {
+                        var ref = db.ref('rule_categories').push({ icon:cat.icon, name:cat.name, order:Date.now() });
+                        var rulesForCat = DEFAULT_RULES.rules[cat.name] || [];
+                        rulesForCat.forEach(function(rule) {
+                            ref.child('rules').push(rule);
+                        });
                     });
+                    // Write punishments
+                    DEFAULT_RULES.punishments.forEach(function(p) {
+                        db.ref('rules/punishments').push(p);
+                    });
+                    alert('✅ החוקים נטענו בהצלחה!');
                 });
-                DEFAULT_RULES.punishments.forEach(function(p) {
-                    db.ref('rules/punishments').push(p);
-                });
-                alert('✅ החוקים נטענו בהצלחה!');
             });
         };
     }
