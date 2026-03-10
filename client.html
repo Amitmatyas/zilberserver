@@ -19,17 +19,12 @@
         font-family: 'Assistant', sans-serif;
         background-color: var(--bg-dark);
         color: var(--text-color);
-        margin: 0;
-        padding: 0;
+        margin: 0; padding: 0;
         line-height: 1.6;
         direction: rtl;
     }
 
-    .container {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 20px;
-    }
+    .container { max-width: 900px; margin: 0 auto; padding: 20px; }
 
     header {
         text-align: center;
@@ -37,255 +32,128 @@
         background-color: #0a0a1a;
         border-bottom: 4px solid var(--primary-color);
         border-radius: 0 0 30px 30px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
 
-    /* עיצוב הלוגו החדש */
     .logo-img {
-        max-width: 200px; /* ניתן לשנות את הגודל כאן */
-        height: auto;
-        margin-bottom: 20px;
-        filter: drop-shadow(0 0 10px rgba(88, 101, 242, 0.5));
+        max-width: 200px; height: auto; margin-bottom: 20px;
+        filter: drop-shadow(0 0 10px rgba(88,101,242,0.5));
     }
 
     h1 {
         font-family: 'Varela Round', sans-serif;
-        margin: 10px 0;
-        color: var(--accent-color);
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
-        font-size: 2.5em;
+        margin: 10px 0; color: var(--accent-color);
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.6); font-size: 2.5em;
     }
 
     .ip-box {
-        background: #333;
-        padding: 12px 25px;
-        border-radius: 12px;
-        display: inline-block;
-        margin-top: 15px;
+        background: #333; padding: 12px 25px; border-radius: 12px;
+        display: inline-block; margin-top: 15px;
         border: 2px dashed var(--accent-color);
-        font-weight: bold;
-        letter-spacing: 1px;
-        cursor: pointer;
-        position: relative;
-        transition: all 0.3s ease;
+        font-weight: bold; letter-spacing: 1px; cursor: pointer;
+        position: relative; transition: all 0.3s ease;
     }
-
-    .ip-box:hover {
-        background: #444;
-        transform: scale(1.05);
-    }
-
+    .ip-box:hover { background: #444; transform: scale(1.05); }
     .copy-tooltip {
-        visibility: hidden;
-        width: 80px;
-        background-color: #555;
-        color: #fff;
-        text-align: center;
-        border-radius: 6px;
-        padding: 5px 0;
-        position: absolute;
-        z-index: 10;
-        bottom: 125%;
-        left: 50%;
-        margin-left: -40px;
-        opacity: 0;
-        transition: opacity 0.3s;
-        font-size: 0.8em;
+        visibility: hidden; width: 80px; background-color: #555; color: #fff;
+        text-align: center; border-radius: 6px; padding: 5px 0;
+        position: absolute; z-index: 10; bottom: 125%; left: 50%; margin-left: -40px;
+        opacity: 0; transition: opacity 0.3s; font-size: 0.8em;
     }
-
-    .ip-box.copied .copy-tooltip {
-        visibility: visible;
-        opacity: 1;
-    }
+    .ip-box.copied .copy-tooltip { visibility: visible; opacity: 1; }
 
     section {
-        background: var(--card-bg);
-        margin: 30px 0;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        background: var(--card-bg); margin: 30px 0; padding: 25px;
+        border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     }
 
     h2 {
-        border-bottom: 2px solid var(--primary-color);
-        padding-bottom: 10px;
-        color: var(--primary-color);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-top: 0;
+        border-bottom: 2px solid var(--primary-color); padding-bottom: 10px;
+        color: var(--primary-color); display: flex; align-items: center; gap: 12px; margin-top: 0;
     }
 
-    .summary-box {
-        background: rgba(88, 101, 242, 0.1);
-        border-right: 5px solid var(--primary-color);
-        padding: 15px;
-        margin-bottom: 20px;
-        font-style: italic;
-    }
-
-    ul {
-        list-style: none;
-        padding: 0;
-    }
-
+    ul { list-style: none; padding: 0; }
     ul li {
-        padding: 12px 0;
-        border-bottom: 1px solid #3d3d3d;
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
+        padding: 12px 0; border-bottom: 1px solid #3d3d3d;
+        display: flex; align-items: flex-start; gap: 10px;
     }
+    ul li:last-child { border-bottom: none; }
 
-    ul li:last-child {
-        border-bottom: none;
+    .punishment-table { width: 100%; border-collapse: collapse; margin-top: 15px; overflow: hidden; border-radius: 10px; }
+    .punishment-table th { background: var(--primary-color); color: white; }
+    .punishment-table td, .punishment-table th { padding: 15px; border: 1px solid #444; text-align: center; }
+    .punishment-table tr:nth-child(even) { background: #363636; }
+
+    /* ANNOUNCEMENTS */
+    .ann-item { padding: 12px 0; border-bottom: 1px solid #3d3d3d; display: flex; align-items: flex-start; gap: 10px; }
+    .ann-item:last-child { border-bottom: none; }
+    .ann-date { color: #888; font-size: 0.82em; margin-top: 3px; white-space: nowrap; }
+
+    /* EVENTS */
+    .event-item { padding: 14px 0; border-bottom: 1px solid #3d3d3d; cursor: pointer; }
+    .event-item:last-child { border-bottom: none; }
+    .event-top { display: flex; align-items: center; gap: 10px; }
+    .event-top strong { flex: 1; }
+    .event-countdown {
+        background: rgba(255,204,0,0.15); color: var(--accent-color); font-weight: bold;
+        font-size: 0.88em; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,204,0,0.3);
     }
-
-    .punishment-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-        overflow: hidden;
-        border-radius: 10px;
+    .event-chevron { color: #888; font-size: 0.75em; transition: transform 0.25s; }
+    .event-item.open .event-chevron { transform: rotate(180deg); }
+    .event-details {
+        display: none; margin-top: 10px; padding: 12px 14px;
+        background: rgba(88,101,242,0.07); border-right: 3px solid var(--primary-color);
+        border-radius: 6px; font-size: 0.92em; color: #ccc;
     }
+    .event-item.open .event-details { display: block; }
+    .event-details p { margin: 5px 0; }
 
-    .punishment-table th {
-        background: var(--primary-color);
-        color: white;
+    /* CONTENT GRID */
+    .content-grid { display: flex; gap: 24px; }
+    .content-grid > div { flex: 1; min-width: 0; }
+    .content-col-title {
+        font-size: 0.82em; color: #888; text-transform: uppercase;
+        letter-spacing: 0.5px; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid #3d3d3d;
     }
+    @media (max-width: 600px) { .content-grid { flex-direction: column; gap: 10px; } }
 
-    .punishment-table td, .punishment-table th {
-        padding: 15px;
-        border: 1px solid #444;
-        text-align: center;
+    /* PLAYERS GRID */
+    .players-grid { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 6px; }
+    .player-chip {
+        display: flex; align-items: center; gap: 12px;
+        background: rgba(88,101,242,0.1); border: 1px solid rgba(88,101,242,0.25);
+        border-radius: 12px; padding: 12px 16px; min-width: 170px;
+        transition: all 0.2s ease;
     }
-
-    .punishment-table tr:nth-child(even) {
-        background: #363636;
+    .player-chip:hover { background: rgba(88,101,242,0.18); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(88,101,242,0.15); }
+    .player-chip-av {
+        width: 44px; height: 44px; border-radius: 8px;
+        background: #333; display: flex; align-items: center;
+        justify-content: center; font-weight: 700; color: #fff; flex-shrink: 0;
+        overflow: hidden; image-rendering: pixelated;
+        border: 2px solid rgba(88,101,242,0.3);
     }
+    .player-chip-av img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+    .player-chip-info strong { display: block; font-size: 0.95em; }
+    .player-chip-info .mc-tag { color: #888; font-size: 0.78em; display:block; margin-top:2px; }
 
-        /* ── ANNOUNCEMENTS ── */
-        .ann-item {
-            padding: 12px 0;
-            border-bottom: 1px solid #3d3d3d;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-        .ann-item:last-child { border-bottom: none; }
-        .ann-date { color: #888; font-size: 0.82em; margin-top: 3px; white-space: nowrap; }
+    /* FOOTER */
+    .footer-info { text-align: center; margin-top: 50px; padding: 30px; background: #111; border-radius: 20px; }
+    .discord-btn {
+        display: inline-flex; align-items: center; gap: 12px; padding: 12px 24px;
+        background: transparent; border: 2px solid var(--primary-color); color: white;
+        text-decoration: none; border-radius: 8px; font-weight: bold; transition: all 0.3s ease;
+    }
+    .discord-btn:hover { background: var(--primary-color); transform: scale(1.05); box-shadow: 0 0 20px rgba(88,101,242,0.4); }
+    .discord-icon { width: 25px; height: auto; }
 
-        /* ── EVENTS ── */
-        .event-item {
-            padding: 14px 0;
-            border-bottom: 1px solid #3d3d3d;
-            cursor: pointer;
-        }
-        .event-item:last-child { border-bottom: none; }
-        .event-top {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .event-top strong { flex: 1; }
-        .event-countdown {
-            background: rgba(255,204,0,0.15);
-            color: var(--accent-color);
-            font-weight: bold;
-            font-size: 0.88em;
-            padding: 4px 10px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,204,0,0.3);
-        }
-        .event-chevron {
-            color: #888;
-            font-size: 0.75em;
-            transition: transform 0.25s;
-        }
-        .event-item.open .event-chevron { transform: rotate(180deg); }
-        .event-details {
-            display: none;
-            margin-top: 10px;
-            padding: 12px 14px;
-            background: rgba(88,101,242,0.07);
-            border-right: 3px solid var(--primary-color);
-            border-radius: 6px;
-            font-size: 0.92em;
-            color: #ccc;
-        }
-        .event-item.open .event-details { display: block; }
-        .event-details p { margin: 5px 0; }
-
-        /* ── CONTENT GRID (announcements + events side by side) ── */
-        .content-grid {
-            display: flex;
-            gap: 24px;
-        }
-        .content-grid > div {
-            flex: 1;
-            min-width: 0;
-        }
-        .content-col-title {
-            font-size: 0.82em;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-            padding-bottom: 6px;
-            border-bottom: 1px solid #3d3d3d;
-        }
-        @media (max-width: 600px) {
-            .content-grid { flex-direction: column; gap: 10px; }
-        }
-
-        /* ── FOOTER ── */
-        .footer-info {
-            text-align: center;
-            margin-top: 50px;
-            padding: 30px;
-            background: #111;
-            border-radius: 20px;
-        }
-
-        .discord-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 24px;
-            background: transparent;
-            border: 2px solid var(--primary-color);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .discord-btn:hover {
-            background: var(--primary-color);
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(88, 101, 242, 0.4);
-        }
-
-        .discord-icon {
-            width: 25px;
-            height: auto;
-        }
-
-
-        @media (max-width: 600px) {
-            h1 { font-size: 1.8em; }
-            section { padding: 15px; }
-        }
+    @media (max-width: 600px) { h1 { font-size: 1.8em; } section { padding: 15px; } }
     </style>
 </head>
 <body>
 
 <header>
-<img src="https://i.ibb.co/KcT2psvc/logo.png" alt="Logo" class="logo-img">
+    <img src="https://i.ibb.co/KcT2psvc/logo.png" alt="Logo" class="logo-img">
     <h1>השרת של זילבר</h1>
     <div class="ip-box" id="ipAddress" onclick="copyIP()">
         zilber.minecraft.pe
@@ -296,36 +164,16 @@
 
 <div class="container">
 
-    <!-- ── ANNOUNCEMENTS + EVENTS (hidden until data) ── -->
+    <!-- ANNOUNCEMENTS + EVENTS -->
     <section id="section-content" style="display:none">
         <h2 id="content-title">📣 הודעות ואירועים</h2>
-        <div class="content-grid" id="content-grid">
-            <!-- filled by JS -->
-        </div>
+        <div class="content-grid" id="content-grid"></div>
     </section>
 
-    <!-- ── SERVER SUMMARY ── -->
-    <section>
-        <h2>📜 סיכום השרת</h2>
-        <div class="summary-box">
-            השרת הוא חברתי ושיתופי, והעולם נשאר קבוע – אין מחיקות או ריבים. כל השחקנים פועלים יחד לקידום הקהילה.
-        </div>
-        <ul id="summary-rules"></ul>
-    </section>
+    <!-- DYNAMIC RULE CATEGORIES -->
+    <div id="dynamic-rule-sections"></div>
 
-    <!-- ── COMBAT RULES ── -->
-    <section>
-        <h2>⚔️ חוקי לחימה ותקיפה</h2>
-        <ul id="combat-rules"></ul>
-    </section>
-
-    <!-- ── TECHNICAL RULES ── -->
-    <section>
-        <h2>🛠️ חוקים טכניים וכלליים</h2>
-        <ul id="technical-rules"></ul>
-    </section>
-
-    <!-- ── PUNISHMENTS ── -->
+    <!-- PUNISHMENTS -->
     <section>
         <h2>⚖️ דרגות ענישה</h2>
         <p>כל פגיעה באי המרכזי או מעבר על החוקים משתייכת לטבלה הבאה:</p>
@@ -335,7 +183,7 @@
         </table>
     </section>
 
-    <!-- ── ADMINS ── -->
+    <!-- ADMINS -->
     <section>
         <h2>👑 הנהלת השרת</h2>
         <p>בכל בעיה, פנייה או דיווח על נזק באי המרכזי - ניתן לפנות לאדמינים:</p>
@@ -345,15 +193,21 @@
         </ul>
     </section>
 
-   
-        <div class="footer-info">
-            <a href="https://discord.gg/2wVemeKe" class="discord-btn" target="_blank">
-                <img src="https://pngimg.com/uploads/discord/discord_PNG3.png" alt="Discord Logo" class="discord-icon">
-                להצטרפות לדיסקורד
-            </a>
-            <p style="margin-top: 15px; font-size: 0.9em;">© 2026 השרת של זילבר</p>
-        </div>
+    <!-- PLAYERS -->
+    <section id="section-players" style="display:none">
+        <h2>👥 שחקנים</h2>
+        <div class="players-grid" id="players-grid"></div>
+    </section>
 
+    <div class="footer-info">
+        <a href="https://discord.gg/2wVemeKe" class="discord-btn" target="_blank">
+            <img src="https://pngimg.com/uploads/discord/discord_PNG3.png" alt="Discord Logo" class="discord-icon">
+            להצטרפות לדיסקורד
+        </a>
+        <p style="margin-top:15px;font-size:0.9em">© 2026 השרת של זילבר</p>
+    </div>
+
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
@@ -371,188 +225,157 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     var db = firebase.database();
 
-    /* ── COPY IP ── */
+    /* COPY IP */
     window.copyIP = function() {
-        var ipText = 'zilber.minecraft.pe';
         var el = document.createElement('textarea');
-        el.value = ipText;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
+        el.value = 'zilber.minecraft.pe';
+        document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
         var ipBox = document.getElementById('ipAddress');
         ipBox.classList.add('copied');
         setTimeout(function(){ ipBox.classList.remove('copied'); }, 2000);
     };
 
-    /* ══════════════════════════════
-       ANNOUNCEMENTS + EVENTS LAYOUT
-       ══════════════════════════════ */
-    var annData = null;
-    var evData  = null;
-
-    db.ref('announcements').on('value', function(snap) {
-        annData = snap.val();
-        renderContentSection();
-    });
-
-    db.ref('events').on('value', function(snap) {
-        evData = snap.val();
-        renderContentSection();
-    });
+    /* ══ ANNOUNCEMENTS + EVENTS ══ */
+    var annData = null, evData = null;
+    db.ref('announcements').on('value', function(s){ annData=s.val(); renderContentSection(); });
+    db.ref('events').on('value',         function(s){ evData=s.val();  renderContentSection(); });
 
     function renderContentSection() {
         var hasAnn = annData && Object.keys(annData).length > 0;
-        var now = Date.now();
-        var activeEvents = [];
-        if (evData) {
-            Object.values(evData).forEach(function(e) {
-                if (!e.endDate || new Date(e.endDate + (e.endTime ? 'T'+e.endTime : '')).getTime() > now) {
-                    activeEvents.push(e);
-                }
-            });
-        }
+        var now = Date.now(), activeEvents = [];
+        if (evData) Object.values(evData).forEach(function(e){
+            if (!e.endDate || new Date(e.endDate+(e.endTime?'T'+e.endTime:'')).getTime() > now) activeEvents.push(e);
+        });
         var hasEv = activeEvents.length > 0;
-
         var section = document.getElementById('section-content');
         var grid    = document.getElementById('content-grid');
         var title   = document.getElementById('content-title');
+        if (!hasAnn && !hasEv) { section.style.display='none'; return; }
+        section.style.display='block'; grid.innerHTML='';
+        if (hasAnn && hasEv)  title.textContent='📣 הודעות ואירועים';
+        else if (hasAnn)      title.textContent='📢 הודעות';
+        else                  title.textContent='🎯 אירועים';
 
-        if (!hasAnn && !hasEv) {
-            section.style.display = 'none';
-            return;
-        }
-        section.style.display = 'block';
-        grid.innerHTML = '';
-
-        /* Dynamic title */
-        if (hasAnn && hasEv)  title.textContent = '📣 הודעות ואירועים';
-        else if (hasAnn)      title.textContent = '📢 הודעות';
-        else                  title.textContent = '🎯 אירועים';
-
-        /* Announcements column */
         if (hasAnn) {
-            var annCol = document.createElement('div');
-            if (hasAnn && hasEv) {
-                var ct = document.createElement('div');
-                ct.className = 'content-col-title';
-                ct.textContent = '📢 הודעות';
-                annCol.appendChild(ct);
-            }
-            Object.values(annData).forEach(function(a) {
-                var item = document.createElement('div');
-                item.className = 'ann-item';
-                item.innerHTML =
-                    '<span>📢</span>' +
-                    '<div style="flex:1"><div>' + a.text + '</div>' +
-                    (a.date ? '<div class="ann-date">' + a.date + '</div>' : '') +
-                    '</div>';
+            var annCol=document.createElement('div');
+            if (hasEv) { var ct=document.createElement('div'); ct.className='content-col-title'; ct.textContent='📢 הודעות'; annCol.appendChild(ct); }
+            Object.values(annData).forEach(function(a){
+                var item=document.createElement('div'); item.className='ann-item';
+                item.innerHTML='<span>📢</span><div style="flex:1"><div>'+a.text+'</div>'+(a.date?'<div class="ann-date">'+a.date+'</div>':'' )+'</div>';
                 annCol.appendChild(item);
             });
             grid.appendChild(annCol);
         }
 
-        /* Events column */
         if (hasEv) {
-            var evCol = document.createElement('div');
-            if (hasAnn && hasEv) {
-                var ct2 = document.createElement('div');
-                ct2.className = 'content-col-title';
-                ct2.textContent = '🎯 אירועים';
-                evCol.appendChild(ct2);
-            }
-            activeEvents.forEach(function(e) {
-                var item = document.createElement('div');
-                item.className = 'event-item';
-
-                var top = document.createElement('div');
-                top.className = 'event-top';
-
-                var nameSpan = document.createElement('strong');
-                nameSpan.textContent = e.name;
-
-                var countdownSpan = document.createElement('span');
-                countdownSpan.className = 'event-countdown';
-                countdownSpan.textContent = '⏱ ...';
-
-                var chevron = document.createElement('span');
-                chevron.className = 'event-chevron';
-                chevron.textContent = '▼';
-
+            var evCol=document.createElement('div');
+            if (hasAnn) { var ct2=document.createElement('div'); ct2.className='content-col-title'; ct2.textContent='🎯 אירועים'; evCol.appendChild(ct2); }
+            activeEvents.forEach(function(e){
+                var item=document.createElement('div'); item.className='event-item';
+                var top=document.createElement('div'); top.className='event-top';
+                var nameSpan=document.createElement('strong'); nameSpan.textContent=e.name;
+                var countdownSpan=document.createElement('span'); countdownSpan.className='event-countdown'; countdownSpan.textContent='⏱ ...';
+                var chevron=document.createElement('span'); chevron.className='event-chevron'; chevron.textContent='▼';
                 top.appendChild(nameSpan);
                 if (e.timerTarget) top.appendChild(countdownSpan);
                 top.appendChild(chevron);
-
-                var details = document.createElement('div');
-                details.className = 'event-details';
-                var detHTML = '';
-                if (e.startDate) detHTML += '<p>📅 התחלה: ' + e.startDate + (e.startTime ? ' בשעה ' + e.startTime : '') + '</p>';
-                if (e.endDate)   detHTML += '<p>🏁 סיום: '   + e.endDate   + (e.endTime   ? ' בשעה ' + e.endTime   : '') + '</p>';
-                if (e.description) detHTML += '<p>📝 ' + e.description + '</p>';
-                details.innerHTML = detHTML;
-
-                item.appendChild(top);
-                item.appendChild(details);
+                var details=document.createElement('div'); details.className='event-details';
+                var dh='';
+                if (e.startDate) dh+='<p>📅 התחלה: '+e.startDate+(e.startTime?' בשעה '+e.startTime:'')+'</p>';
+                if (e.endDate)   dh+='<p>🏁 סיום: '+e.endDate+(e.endTime?' בשעה '+e.endTime:'')+'</p>';
+                if (e.description) dh+='<p>📝 '+e.description+'</p>';
+                details.innerHTML=dh;
+                item.appendChild(top); item.appendChild(details);
                 item.addEventListener('click', function(){ item.classList.toggle('open'); });
                 evCol.appendChild(item);
-
-                /* Countdown */
                 if (e.timerTarget) {
-                    var target = new Date(e.timerTarget).getTime();
-                    (function(span, tgt) {
-                        function tick() {
-                            var diff = tgt - Date.now();
-                            if (diff <= 0) { span.textContent = '⏰ התחיל!'; return; }
-                            var d = Math.floor(diff / 86400000);
-                            var h = Math.floor((diff % 86400000) / 3600000);
-                            var m = Math.floor((diff % 3600000) / 60000);
-                            var s = Math.floor((diff % 60000) / 1000);
-                            span.textContent = '⏱ ' + (d > 0 ? d + 'ד ' : '') + h + ':' + pad(m) + ':' + pad(s);
-                            setTimeout(tick, 1000);
-                        }
-                        tick();
-                    })(countdownSpan, target);
+                    var tgt=new Date(e.timerTarget).getTime();
+                    (function(sp,t){ function tick(){
+                        var diff=t-Date.now();
+                        if(diff<=0){sp.textContent='⏰ התחיל!';return;}
+                        var d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+                        sp.textContent='⏱ '+(d>0?d+'ד ':'')+h+':'+pad(m)+':'+pad(s);
+                        setTimeout(tick,1000);
+                    } tick(); })(countdownSpan,tgt);
                 }
             });
             grid.appendChild(evCol);
         }
     }
 
-    function pad(n) { return String(n).padStart(2, '0'); }
+    function pad(n){ return String(n).padStart(2,'0'); }
 
-    /* ══════════════════
-       RULES FROM FIREBASE
-       ══════════════════ */
-    function loadRules(fbPath, elId) {
-        db.ref(fbPath).on('value', function(snap) {
-            var el = document.getElementById(elId);
-            if (!el) return;
-            var data = snap.val();
-            if (!data) return;
-            el.innerHTML = Object.values(data).map(function(r) {
-                return '<li>' +
-                    (r.icon ? r.icon + ' ' : '') +
-                    (r.title ? '<b>' + r.title + ':</b> ' : '') +
-                    (r.text || '') +
-                    '</li>';
-            }).join('');
+    /* ══ DYNAMIC RULE CATEGORIES ══ */
+    db.ref('rule_categories').on('value', function(snap) {
+        var container = document.getElementById('dynamic-rule-sections');
+        container.innerHTML = '';
+        var d = snap.val();
+        if (!d) return;
+        var sorted = Object.keys(d).sort(function(a,b){ return (d[a].order||0)-(d[b].order||0); });
+        sorted.forEach(function(catId) {
+            var cat = d[catId];
+            var sec = document.createElement('section');
+            var h2  = document.createElement('h2');
+            h2.textContent = (cat.icon||'') + ' ' + (cat.name||'');
+            var ul  = document.createElement('ul');
+            var rules = cat.rules ? Object.values(cat.rules) : [];
+            rules.forEach(function(r) {
+                var li = document.createElement('li');
+                li.innerHTML = (r.icon||'') + ' ' +
+                    (r.title ? '<b>'+r.title+':</b> ' : '') +
+                    (r.text||'');
+                ul.appendChild(li);
+            });
+            sec.appendChild(h2);
+            sec.appendChild(ul);
+            container.appendChild(sec);
         });
-    }
+    });
 
-    loadRules('rules/summary',   'summary-rules');
-    loadRules('rules/combat',    'combat-rules');
-    loadRules('rules/technical', 'technical-rules');
-
-    /* ══════════════════
-       PUNISHMENTS
-       ══════════════════ */
+    /* ══ PUNISHMENTS ══ */
     db.ref('rules/punishments').on('value', function(snap) {
-        var tbody = document.getElementById('pun-tbody');
-        var data = snap.val();
-        if (!data || !tbody) return;
-        tbody.innerHTML = Object.values(data).map(function(p) {
-            return '<tr><td>' + p.offense + '</td><td>' + p.penalty + '</td></tr>';
+        var tbody=document.getElementById('pun-tbody');
+        var data=snap.val();
+        if (!data||!tbody) return;
+        tbody.innerHTML=Object.values(data).map(function(p){
+            return '<tr><td>'+p.offense+'</td><td>'+p.penalty+'</td></tr>';
         }).join('');
+    });
+
+    /* ══ PLAYERS ══ */
+    db.ref('players').on('value', function(snap) {
+        var section = document.getElementById('section-players');
+        var grid    = document.getElementById('players-grid');
+        var d = snap.val();
+        if (!d || Object.keys(d).length === 0) { section.style.display='none'; return; }
+        section.style.display='block';
+        grid.innerHTML='';
+        Object.values(d).forEach(function(p) {
+            var chip = document.createElement('div');
+            chip.className='player-chip';
+
+            /* Avatar with skin */
+            var av = document.createElement('div');
+            av.className='player-chip-av';
+            if (p.mcuser) {
+                var img = document.createElement('img');
+                img.alt = p.mcuser;
+                img.src = 'https://api.mineatar.io/face/' + encodeURIComponent(p.mcuser) + '?scale=8';
+                img.onerror = function() {
+                    img.onerror = function() { av.removeChild(img); av.textContent=(p.name||'?')[0].toUpperCase(); };
+                    img.src = 'https://minotar.net/avatar/' + encodeURIComponent(p.mcuser) + '/44';
+                };
+                av.appendChild(img);
+            } else {
+                av.textContent = (p.name||'?')[0].toUpperCase();
+            }
+
+            var info = document.createElement('div');
+            info.className='player-chip-info';
+            info.innerHTML='<strong>'+(p.name||'')+'</strong>'+(p.mcuser?'<span class="mc-tag">⛏ '+p.mcuser+'</span>':'');
+            chip.appendChild(av); chip.appendChild(info);
+            grid.appendChild(chip);
+        });
     });
 
 });
