@@ -101,6 +101,122 @@
         /* NEW CATEGORY FORM */
         .new-cat-box { background: rgba(88,101,242,0.06); border: 1px dashed rgba(88,101,242,0.35); border-radius: 12px; padding: 18px 20px; margin-bottom: 24px; }
         .new-cat-box h3 { font-family: 'Varela Round'; color: var(--muted); font-size: 0.95em; margin-bottom: 12px; }
+        /* ══ PUNISHMENT TRACKER ══ */
+        .pun-player-card {
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 14px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .pun-player-card.has-punishments { border-color: rgba(237,66,69,0.3); }
+
+        .pun-player-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 16px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s;
+        }
+        .pun-player-head:hover { background: rgba(255,255,255,0.03); }
+
+        .pun-avatar { width: 38px; height: 38px; border-radius: 7px; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; flex-shrink: 0; overflow: hidden; image-rendering: pixelated; }
+        .pun-avatar img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+
+        .pun-player-name { flex: 1; font-weight: 700; font-size: 0.95em; line-height: 1.2; }
+        .pun-player-mc { font-size: 0.75em; color: var(--muted); font-weight: 400; margin-top: 2px; }
+
+        .pun-count-badge {
+            background: rgba(123,130,160,0.1);
+            color: var(--muted);
+            border: 1px solid rgba(123,130,160,0.2);
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.8em;
+            font-weight: 700;
+            min-width: 26px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .pun-count-badge.has-puns {
+            background: rgba(237,66,69,0.15);
+            color: var(--red);
+            border-color: rgba(237,66,69,0.3);
+        }
+
+        .pun-chevron { color: var(--muted); font-size: 0.8em; transition: transform 0.25s; }
+        .pun-player-card.open .pun-chevron { transform: rotate(180deg); }
+
+        .pun-player-body {
+            display: none;
+            border-top: 1px solid var(--border);
+            padding: 16px;
+        }
+        .pun-player-card.open .pun-player-body { display: block; }
+
+        /* Add punishment form */
+        .pun-add-form {
+            background: rgba(88,101,242,0.06);
+            border: 1px dashed rgba(88,101,242,0.3);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+        .pun-add-form .form-row { margin-bottom: 8px; }
+        .pun-add-form .form-row:last-child { margin-bottom: 0; }
+
+        /* Summary bar */
+        .pun-summary-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: rgba(237,66,69,0.05);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 0.85em;
+            color: var(--muted);
+            flex-wrap: wrap;
+        }
+        .pun-summary-bar strong { color: var(--text); }
+        .pun-next-step {
+            margin-right: auto;
+            background: rgba(230,126,34,0.12);
+            color: var(--orange);
+            border: 1px solid rgba(230,126,34,0.25);
+            border-radius: 6px;
+            padding: 3px 10px;
+            font-size: 0.82em;
+            font-weight: 700;
+        }
+
+        /* Log entries */
+        .pun-log-entry {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: rgba(237,66,69,0.05);
+            border: 1px solid rgba(237,66,69,0.14);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            animation: slideIn 0.2s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .pun-log-left { flex: 1; }
+        .pun-log-degree { font-weight: 700; color: var(--red); font-size: 0.9em; }
+        .pun-log-penalty { color: var(--text); font-size: 0.88em; margin: 2px 0; }
+        .pun-log-meta { font-size: 0.78em; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+        .pun-log-reason { font-size: 0.82em; color: #a0a8c0; margin-top: 3px; font-style: italic; }
+        .pun-log-right { display: flex; align-items: center; }
+
+        .empty-puns { color: var(--muted); font-size: 0.85em; text-align: center; padding: 14px 0; }
     </style>
 </head>
 <body>
@@ -229,6 +345,11 @@
                     </div>
                     <div id="pun-list2"></div>
                 </div>
+                ֿ<div class="admin-card">
+    <h2 style="color:var(--red)">🎯 מעקב עונשים לשחקנים</h2>
+    <p style="color:var(--muted);font-size:0.85em;margin-bottom:18px">לחץ על שחקן כדי לפתוח את ההיסטוריה ולהוסיף עונש חדש.</p>
+    <div id="pun-tracker-list"></div>
+</div>
             </section>
 
         </main>
@@ -313,16 +434,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    /* ── INIT ── */
-    function startDashboard() {
-        setupAnnouncements();
-        setupEvents();
-        setupPlayers();
-        setupDynamicCategories();
-        setupPunishments('pun-list',  'pun-off',  'pun-pen',  'btn-pun');
-        setupPunishments('pun-list2', 'pun-off2', 'pun-pen2', 'btn-pun2');
-        setupDefaultLoader();
-    }
+function startDashboard() {
+    setupAnnouncements();
+    setupEvents();
+    setupPlayers();
+    setupDynamicCategories();
+    setupPunishments('pun-list',  'pun-off',  'pun-pen',  'btn-pun');
+    setupPunishments('pun-list2', 'pun-off2', 'pun-pen2', 'btn-pun2');
+    setupDefaultLoader();
+    setupPunishmentTracker();
+}
 
     /* ── UTIL BUTTONS ── */
     function delBtn(path) {
@@ -761,6 +882,291 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
+    /* ══════════════════════════════════════════
+       PUNISHMENT TRACKER
+    ══════════════════════════════════════════ */
+    function setupPunishmentTracker() {
+        var playersData = {};
+        var punDegreesData = {};
+        // Track per-player Firebase listeners to avoid memory leaks
+        var playerPunListeners = {};
+
+        db.ref('players').on('value', function(snap) {
+            playersData = snap.val() || {};
+            renderTrackerList();
+        });
+        db.ref('rules/punishments').on('value', function(snap) {
+            punDegreesData = snap.val() || {};
+            renderTrackerList();
+        });
+
+        function renderTrackerList() {
+            var container = document.getElementById('pun-tracker-list');
+            if (!container) return;
+
+            // Save open state
+            var openIds = {};
+            container.querySelectorAll('.pun-player-card.open').forEach(function(el) {
+                openIds[el.dataset.pid] = true;
+            });
+
+            // Detach old per-player listeners
+            Object.keys(playerPunListeners).forEach(function(pid) {
+                db.ref('player_punishments/' + pid).off('value', playerPunListeners[pid]);
+            });
+            playerPunListeners = {};
+
+            container.innerHTML = '';
+
+            var pids = Object.keys(playersData);
+            if (pids.length === 0) {
+                container.innerHTML = '<p class="empty-puns">אין שחקנים רשומים. הוסף שחקנים בטאב 👥 שחקנים.</p>';
+                return;
+            }
+
+            pids.forEach(function(pid) {
+                var card = buildTrackerCard(pid, playersData[pid], !!openIds[pid]);
+                container.appendChild(card);
+            });
+        }
+
+        function buildTrackerCard(pid, player, startOpen) {
+            var card = document.createElement('div');
+            card.className = 'pun-player-card' + (startOpen ? ' open' : '');
+            card.dataset.pid = pid;
+
+            /* ── Head ── */
+            var head = document.createElement('div');
+            head.className = 'pun-player-head';
+
+            var av = document.createElement('div');
+            av.className = 'pun-avatar';
+            if (player.mcuser) {
+                var avImg = document.createElement('img');
+                avImg.src = skinUrl(player.mcuser);
+                avImg.alt = player.mcuser;
+                avImg.onerror = function() {
+                    avImg.onerror = function() { if(av.contains(avImg)) av.removeChild(avImg); av.textContent = (player.name||'?')[0].toUpperCase(); };
+                    avImg.src = 'https://minotar.net/avatar/' + encodeURIComponent(player.mcuser) + '/44';
+                };
+                av.appendChild(avImg);
+            } else {
+                av.textContent = (player.name||'?')[0].toUpperCase();
+            }
+
+            var nameWrap = document.createElement('div');
+            nameWrap.className = 'pun-player-name';
+            nameWrap.textContent = player.name || '—';
+            if (player.mcuser) {
+                var mcLine = document.createElement('div');
+                mcLine.className = 'pun-player-mc';
+                mcLine.textContent = '⛏ ' + player.mcuser;
+                nameWrap.appendChild(mcLine);
+            }
+
+            var badge = document.createElement('div');
+            badge.className = 'pun-count-badge';
+            badge.textContent = '0 עונשים';
+
+            var chevron = document.createElement('span');
+            chevron.className = 'pun-chevron';
+            chevron.textContent = '▼';
+
+            head.appendChild(av);
+            head.appendChild(nameWrap);
+            head.appendChild(badge);
+            head.appendChild(chevron);
+            head.onclick = function() { card.classList.toggle('open'); };
+
+            /* ── Body ── */
+            var body = document.createElement('div');
+            body.className = 'pun-player-body';
+
+            // Summary bar
+            var summaryBar = document.createElement('div');
+            summaryBar.className = 'pun-summary-bar';
+            var totalSpan = document.createElement('strong');
+            totalSpan.textContent = '0';
+            summaryBar.appendChild(document.createTextNode('סה"כ עונשים: '));
+            summaryBar.appendChild(totalSpan);
+            var nextStepEl = document.createElement('span');
+            nextStepEl.className = 'pun-next-step';
+            nextStepEl.style.display = 'none';
+            summaryBar.appendChild(nextStepEl);
+            body.appendChild(summaryBar);
+
+            // Add form
+            var addForm = document.createElement('div');
+            addForm.className = 'pun-add-form';
+
+            var degRow = document.createElement('div');
+            degRow.className = 'form-row';
+            var degLabel = document.createElement('label');
+            degLabel.textContent = 'דרגת עונש:';
+            var degSel = document.createElement('select');
+            degSel.style.flex = '1';
+
+            function rebuildDegSelect() {
+                degSel.innerHTML = '';
+                var blank = document.createElement('option');
+                blank.value = ''; blank.textContent = '-- בחר דרגה --';
+                degSel.appendChild(blank);
+                var keys = Object.keys(punDegreesData);
+                if (keys.length === 0) {
+                    blank.textContent = '— אין דרגות ענישה מוגדרות —';
+                } else {
+                    keys.forEach(function(did) {
+                        var deg = punDegreesData[did];
+                        var opt = document.createElement('option');
+                        opt.value = did;
+                        opt.textContent = deg.offense + ' → ' + deg.penalty;
+                        degSel.appendChild(opt);
+                    });
+                }
+            }
+            rebuildDegSelect();
+
+            degRow.appendChild(degLabel);
+            degRow.appendChild(degSel);
+
+            var detRow = document.createElement('div');
+            detRow.className = 'form-row';
+            var dateLabel = document.createElement('label');
+            dateLabel.textContent = 'תאריך:';
+            var dateInp = document.createElement('input');
+            dateInp.type = 'date';
+            dateInp.value = new Date().toISOString().split('T')[0];
+            var reasonInp = document.createElement('input');
+            reasonInp.type = 'text';
+            reasonInp.placeholder = 'סיבה / תיאור (אופציונלי)';
+            reasonInp.style.flex = '1';
+            detRow.appendChild(dateLabel);
+            detRow.appendChild(dateInp);
+            detRow.appendChild(reasonInp);
+
+            var addPunBtn = document.createElement('button');
+            addPunBtn.className = 'btn btn-red btn-sm';
+            addPunBtn.style.marginTop = '6px';
+            addPunBtn.textContent = '⚡ רשום עונש';
+            addPunBtn.onclick = function() {
+                var selId = degSel.value;
+                if (!selId) { alert('יש לבחור דרגת עונש'); return; }
+                var deg = punDegreesData[selId];
+                if (!deg) return;
+                db.ref('player_punishments/' + pid).push({
+                    degreeId: selId,
+                    offense:  deg.offense,
+                    penalty:  deg.penalty,
+                    date:     dateInp.value || new Date().toISOString().split('T')[0],
+                    reason:   reasonInp.value.trim(),
+                    addedAt:  Date.now()
+                });
+                reasonInp.value = '';
+                degSel.value = '';
+            };
+
+            addForm.appendChild(degRow);
+            addForm.appendChild(detRow);
+            addForm.appendChild(addPunBtn);
+            body.appendChild(addForm);
+
+            // Log list
+            var logList = document.createElement('div');
+            body.appendChild(logList);
+
+            // Firebase listener for this player's punishments
+            var listener = db.ref('player_punishments/' + pid).on('value', function(snap) {
+                var logs = snap.val() || {};
+                var logKeys = Object.keys(logs);
+                var count = logKeys.length;
+
+                // Badge
+                badge.textContent = count + (count === 1 ? ' עונש' : ' עונשים');
+                badge.className = 'pun-count-badge' + (count > 0 ? ' has-puns' : '');
+                card.className = 'pun-player-card' + (card.classList.contains('open') ? ' open' : '') + (count > 0 ? ' has-punishments' : '');
+
+                // Total
+                totalSpan.textContent = count;
+
+                // Next step hint
+                var degArr = Object.values(punDegreesData);
+                if (degArr.length > 0) {
+                    var nextIdx = Math.min(count, degArr.length - 1);
+                    nextStepEl.textContent = 'עונש הבא: ' + degArr[nextIdx].offense + ' → ' + degArr[nextIdx].penalty;
+                    nextStepEl.style.display = '';
+                } else {
+                    nextStepEl.style.display = 'none';
+                }
+
+                // Refresh degree selector
+                rebuildDegSelect();
+
+                // Render log
+                logList.innerHTML = '';
+                if (count === 0) {
+                    logList.innerHTML = '<p class="empty-puns" style="padding:10px 0">אין עונשים רשומים לשחקן זה.</p>';
+                    return;
+                }
+
+                // Sort newest first
+                logKeys.sort(function(a,b){ return (logs[b].addedAt||0) - (logs[a].addedAt||0); });
+
+                logKeys.forEach(function(lid) {
+                    var log = logs[lid];
+                    var entry = document.createElement('div');
+                    entry.className = 'pun-log-entry';
+
+                    var left = document.createElement('div');
+                    left.className = 'pun-log-left';
+
+                    var degEl = document.createElement('div');
+                    degEl.className = 'pun-log-degree';
+                    degEl.textContent = '⚖️ ' + (log.offense || '—');
+
+                    var penEl = document.createElement('div');
+                    penEl.className = 'pun-log-penalty';
+                    penEl.textContent = '→ ' + (log.penalty || '—');
+
+                    var meta = document.createElement('div');
+                    meta.className = 'pun-log-meta';
+
+                    var dateSpan = document.createElement('span');
+                    dateSpan.textContent = '📅 ' + (log.date || '—');
+                    meta.appendChild(dateSpan);
+
+                    if (log.addedAt) {
+                        var regSpan = document.createElement('span');
+                        regSpan.textContent = 'נרשם: ' + new Date(log.addedAt).toLocaleString('he-IL');
+                        meta.appendChild(regSpan);
+                    }
+
+                    left.appendChild(degEl);
+                    left.appendChild(penEl);
+                    if (log.reason) {
+                        var reasonEl = document.createElement('div');
+                        reasonEl.className = 'pun-log-reason';
+                        reasonEl.textContent = '💬 ' + log.reason;
+                        left.appendChild(reasonEl);
+                    }
+                    left.appendChild(meta);
+
+                    var right = document.createElement('div');
+                    right.className = 'pun-log-right';
+                    right.appendChild(delBtn('player_punishments/' + pid + '/' + lid));
+
+                    entry.appendChild(left);
+                    entry.appendChild(right);
+                    logList.appendChild(entry);
+                });
+            });
+
+            playerPunListeners[pid] = listener;
+
+            card.appendChild(head);
+            card.appendChild(body);
+            return card;
+        }
+    }
 }); // end DOMContentLoaded
 </script>
 </body>
