@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מבחני קבלה</title>
+
+<style>
+body {
+  margin:0;
+  font-family:Arial;
+  background:#0f0f12;
+  color:white;
+  direction: rtl; /* יישור לימין לעברית */
+}
+
+.header {
+  text-align:center;
+  padding:20px;
+  background:#1a1a1f;
+}
+
+.avatar-container {
+  margin: 10px auto;
+}
+
+.avatar-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #4caf50;
+  display: none; /* יופיע רק אם יש לינק */
+  margin: 0 auto 10px auto;
+}
+
+.avatar-input {
+  background: #2a2a33;
+  border: 1px solid #444;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 12px;
+  width: 60%;
+  max-width: 300px;
+  text-align: center;
+}
+
+.progress {
+  width:80%;
+  height:10px;
+  margin:15px auto;
+  background:#2a2a33;
+  border-radius:10px;
+}
+
+.bar {
+  height:100%;
+  width:0%;
+  background:#4caf50;
+  transition: width 0.3s ease;
+}
+
+/* עיצוב להודעת ההצלחה */
+.success-msg {
+  display: none;
+  color: #4caf50;
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 15px;
+  background: rgba(76, 175, 80, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #4caf50;
+  display: inline-block;
+  animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.container {
+  max-width:800px;
+  margin:auto;
+  padding:15px;
+}
+
+.item {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#1b1b22;
+  padding:10px;
+  margin-bottom:8px;
+  border-radius:10px;
+}
+
+.left {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.right-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.count-input {
+  width: 60px;
+  background: #2a2a33;
+  border: 1px solid #444;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+/* ביטול החצים הקטנים של ה-input number לעיצוב נקי */
+.count-input::-webkit-inner-spin-button,
+.count-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+img.item-icon {
+  width:32px;
+  height:32px;
+  image-rendering: pixelated;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h2>מבחני קבלה ל</h2>
+  
+  <div style="margin: 10px auto 15px auto;">
+<img src="https://i.ibb.co/R49ZXJbG/image.png" style="width:180px; height:180px; object-fit:contain;" onerror="this.style.display='none'">
+
+  <div>הנבחן: עדי גולדברג</div>
+
+  <div class="progress">
+    <div class="bar" id="bar"></div>
+  </div>
+</div>
+
+<div class="container" id="list"></div>
+
+<div id="success-message" class="success-msg">🎉 סיימת את המבחן בהצלחה! - התקבלת לצוות השרת של זילבר 2🎉</div>
+</div> <div class="container" id="list"></div>
+
+<script>
+
+const data = [
+["Polished Blackstone Brick Stairs",2],
+["Light Blue Bed",3],
+["Dandelion",3],
+["Brewing Stand",4],
+["Cauldron",4],
+["Iron Trapdoor",4],
+["Muddy Mangrove Roots",4],
+["Pink Tulip",4],
+["Rooted Dirt",4],
+["Sea Lantern",4],
+["Seagrass",4],
+["Smoker",4],
+["Spruce Door",4],
+["Red Bed",5],
+["Dead Bush",5],
+["Mossy Cobblestone Slab",7],
+["Polished Blackstone Wall",7],
+["Iron Chain",8],
+["Spruce Leaves",15],
+["Magenta Carpet",18],
+["Red Carpet",20],
+["Lime Candle",21],
+["Spruce Trapdoor",21],
+["Nether Wart",24],
+["Soul Sand",24],
+["Cyan Carpet",26],
+["Green Carpet",26],
+["Yellow Carpet",26],
+["Light Blue Carpet",32],
+["Bookshelf",35],
+["Oak Planks",40],
+["Dark Oak Fence",40],
+["Moss Carpet",40],
+["Oak Fence",43],
+["Oak Leaves",46],
+["Deepslate Brick Wall",48],
+["Flower Pot",51],
+["Light Blue Stained Glass Pane",56],
+["Cobbled Deepslate Stairs",64],
+["Blue Orchid",76],
+["Gray Carpet",78],
+["Stripped Dark Oak Log",78],
+["Light Gray Wool",84],
+["Short Grass",84],
+["Dirt Path",93],
+["Light Gray Carpet",93],
+["Spruce Stairs",103],
+["White Stained Glass Pane",158],
+["Stripped Spruce Log",167],
+["White Carpet",176],
+["Lantern",213],
+["Cobbled Deepslate Wall",220]
+];
+
+function imgName(name){
+  return name.replace(/ /g, "_");
+}
+const list = document.getElementById("list");
+const bar = document.getElementById("bar");
+
+// טעינת הנתונים מ-LocalStorage (תומך גם בכמויות וגם בסימונים)
+function load(){
+  return JSON.parse(localStorage.getItem("mc_v4") || '{"checked":{}, "counts":{}}');
+}
+
+function save(state){
+  localStorage.setItem("mc_v4", JSON.stringify(state));
+}
+
+// עדכון מד ההתקדמות למעלה
+function updateProgress(){
+  const cbs = document.querySelectorAll(".item-cb");
+  let done = 0;
+  cbs.forEach(c => { if(c.checked) done++; });
+  bar.style.width = (cbs.length > 0 ? (done / cbs.length * 100) : 0) + "%";
+
+  // בדיקה האם כל הפריטים סומנו ב-V
+  const successEl = document.getElementById("success-message");
+  if (done === cbs.length && cbs.length > 0) {
+    successEl.style.display = "inline-block";
+  } else {
+    successEl.style.display = "none";
+  }
+}
+
+const state = load();
+
+// בניית הרשימה הדינמית
+data.forEach(([name, targetAmount]) => {
+
+  const file = imgName(name);
+
+  const div = document.createElement("div");
+  div.className = "item";
+
+  // מבנה הפריט הכולל את הלוגו, השם, שדה המספר וה-Checkbox
+  div.innerHTML = `
+    <div class="left">
+      <img src="https://minecraft.wiki/images/Invicon_${file}.png"
+           onerror="this.src='https://minecraft.wiki/images/Invicon_Unknown.png'">
+
+      <div>
+        <div>${name}</div>
+        <div style="opacity:.6;font-size:12px">יעד: ${targetAmount}</div>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 15px;">
+      <input type="number" class="count-input" min="0" placeholder="0" 
+             style="width:55px; background:#2a2a33; border:1px solid #444; color:white; padding:5px; border-radius:5px; text-align:center;"
+             value="${state.counts[name] || ''}">
+      <input type="checkbox" class="item-cb">
+    </div>
+  `;
+
+  const cb = div.querySelector(".item-cb");
+  const numInput = div.querySelector(".count-input");
+
+  // טעינת מצב קיים מהדפדפן
+  cb.checked = state.checked[name] || false;
+
+  // פונקציה לבדיקת כמות וסימון וי אוטומטי
+  function checkAmountAndToggle() {
+    const currentVal = parseInt(numInput.value) || 0;
+    
+    if (currentVal >= targetAmount) {
+      cb.checked = true;
+    } else if (currentVal < targetAmount && state.counts[name] >= targetAmount) {
+      // מוריד את הוי רק אם הכמות ירדה מתחת ליעד לאחר שהייתה שווה לו
+      cb.checked = false;
+    }
+    
+    state.checked[name] = cb.checked;
+    state.counts[name] = numInput.value ? currentVal : 0;
+    save(state);
+    updateProgress();
+  }
+
+  // האזנה לשינוי המספר
+  numInput.oninput = checkAmountAndToggle;
+
+  // האזנה לסימון ידני של ה-Checkbox
+  cb.onchange = () => {
+    state.checked[name] = cb.checked;
+    save(state);
+    updateProgress();
+  };
+
+  list.appendChild(div);
+});
+
+// עדכון ראשוני של מד ההתקדמות בטעינת העמוד
+updateProgress();
+
+</script>
+
+</body>
+</html>
