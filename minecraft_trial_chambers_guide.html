@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Heebo:wght@300;400;600&display=swap');
+
+  :root {
+    --gold: #d4af37;
+    --gold-light: #f0d060;
+    --copper: #b87333;
+    --tuff: #7a8a6a;
+    --bg: #111510;
+    --surface: #1a1e18;
+    --surface2: #222820;
+    --border: #3a4535;
+    --text: #c8d4c0;
+    --text-dim: #7a8870;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Heebo', sans-serif;
+    font-weight: 300;
+    line-height: 1.8;
+    padding: 30px 20px 60px;
+  }
+
+  .page {
+    max-width: 900px;
+    margin: auto;
+  }
+
+  /* HEADER */
+  .hero {
+    text-align: center;
+    padding: 60px 20px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(100,130,80,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: var(--tuff);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1.15;
+    text-shadow: 0 0 40px rgba(212,175,55,0.25);
+    margin-bottom: 16px;
+  }
+
+  .hero-sub {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 40px 0;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to left, transparent, var(--border), transparent);
+  }
+  .divider-icon { color: var(--gold); font-size: 1.1rem; }
+
+  /* INTRO BOX */
+  .intro-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-right: 3px solid var(--gold);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 50px;
+  }
+
+  .intro-box p {
+    margin-bottom: 10px;
+    font-size: 0.97rem;
+  }
+
+  .intro-box p:last-child { margin-bottom: 0; }
+
+  strong { color: var(--gold-light); font-weight: 600; }
+
+  /* SECTIONS */
+  .section {
+    margin-bottom: 48px;
+  }
+
+  h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  h2 .icon { font-size: 1.1rem; }
+
+  /* MECHANIC CARDS */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--tuff);
+    transform: translateY(-2px);
+  }
+
+  .card-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card p {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    line-height: 1.65;
+  }
+
+  /* FLOW: STEP BY STEP */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .steps::before {
+    content: '';
+    position: absolute;
+    right: 19px;
+    top: 24px;
+    bottom: 24px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--gold), var(--tuff), transparent);
+  }
+
+  .step {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 16px 0;
+  }
+
+  .step-num {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    color: var(--gold);
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-content h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    color: var(--gold-light);
+    margin-bottom: 4px;
+  }
+
+  .step-content p {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    line-height: 1.65;
+  }
+
+  /* BIOME VARIANTS */
+  .variants {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .variant {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .variant-icon { font-size: 1.8rem; margin-bottom: 8px; }
+
+  .variant-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+
+  .variant p { font-size: 0.8rem; color: var(--text-dim); }
+
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 0.9rem;
+  }
+
+  th {
+    background: var(--surface2);
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    font-weight: 700;
+  }
+
+  td {
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    text-align: center;
+    color: var(--text-dim);
+  }
+
+  tr:nth-child(even) td { background: var(--surface2); }
+
+  tr:hover td {
+    background: rgba(212,175,55,0.05);
+    color: var(--text);
+  }
+
+  .note {
+    margin-top: 12px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    font-style: italic;
+    padding-right: 8px;
+  }
+
+  .tag {
+    display: inline-block;
+    background: rgba(184,115,51,0.2);
+    border: 1px solid var(--copper);
+    color: var(--copper);
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
+  .tag.rare { background: rgba(212,175,55,0.15); border-color: var(--gold); color: var(--gold); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-label">מדריך מלא — Minecraft 1.21</div>
+    <h1>Trial Chambers</h1>
+    <div class="hero-sub">המבנה התת-קרקעי המסוכן והמתגמל ביותר במשחק</div>
+  </div>
+
+  <div class="intro-box">
+    <p>ה-Trial Chambers הם מבנים תת-קרקעיים שנוספו ב-<strong>Minecraft 1.21 (Tricky Trials)</strong>. הם נוצרים עמוק מתחת לפני הקרקע, בנויים בעיקר מ-<strong>Copper</strong> ו-<strong>Tuff</strong>, ומכילים מבוך של חדרים ומסדרונות עם אויבים, מלכודות וכספות.</p>
+    <p>המאפיין הייחודי שלהם הוא ה-<strong>Trial Spawner</strong> — מנגנון חדש שמתאים את עצמו למספר השחקנים בחדר, הופך להיות קשה יותר כשיש יותר שחקנים, ומתגמל בהתאם.</p>
+  </div>
+
+  <!-- WHERE TO FIND -->
+  <div class="section">
+    <h2><span class="icon">🗺️</span> היכן מוצאים Trial Chambers?</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">📍 עומק</div>
+        <p>נמצאים בין Y=-20 ל-Y=-40 בדרך כלל, אך ייתכן גם עמוק יותר. אי אפשר למצוא אותם קרוב לפני השטח.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🧭 איתור</div>
+        <p>השתמשו בפקודה <strong>/locate structure trial_chambers</strong> או חפשו בעזרת Amethyst Shard ו-Map. ה-Cartographer לא מספק מפה לאתר זה.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🌍 ביומים</div>
+        <p>מופיעים בכל הביומים התת-קרקעיים — אין ביום ספציפי. גודלם ומורכבותם משתנה בין יצירה ליצירה.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">📐 גודל</div>
+        <p>מבנים גדולים מאוד — עשרות חדרים בכל יצירה. כל Chamber הוא ייחודי, נוצר פרוצדורלית מ-Template Pools.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCKS -->
+  <div class="section">
+    <h2><span class="icon">🧱</span> חומרי הבנייה</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">🟫 Copper</div>
+        <p>החומר הדומיננטי — Copper Blocks, Cut Copper, Oxidized Copper. רב גוני: ניתן לקצור ולהשתמש בבניין. הנחושת מתחמצנת לאורך זמן.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">⬜ Tuff</div>
+        <p>הבסיס הגושני של המבנה. Tuff Bricks, Polished Tuff, Chiseled Tuff — סט חדש שהוכנס יחד עם ה-Chambers.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🟧 Chiseled Copper</div>
+        <p>בלוקים דקורטיביים נדירים המשמשים בעיקר לעיטור קירות וסמנים ויזואליים בתוך החדרים.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🕯️ Light Sources</div>
+        <p>Lanterns ו-Candles מאירים את המסדרונות. שימו לב — יש חדרי מלכודות חשוכים מכוון.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRIAL SPAWNER MECHANISM -->
+  <div class="section">
+    <h2><span class="icon">⚙️</span> Trial Spawner — המנגנון המרכזי</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>זיהוי שחקנים</h3>
+          <p>ה-Spawner סורק את הסביבה ומזהה כמה שחקנים נמצאים בטווח. הוא מתאים את כמות האויבים בהתאם — בסולו פחות, בקבוצה יותר.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Spawn של אויבים</h3>
+          <p>מוצצים אויבים כמו Breeze, Slimes, Zombies, Skeletons ועוד. ה-Spawner לא מייצר יותר ממכסת אויבים מסוימת בו-זמנית.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Cooldown ואיסוף שלל</h3>
+          <p>לאחר הבסת כל האויבים, ה-Spawner נכנס ל-Cooldown ופולט פריטי שלל ישירות לקרקע — ניתן לאסוף מיד.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Trial Key</h3>
+          <p>השלל כולל <strong>Trial Key</strong> — מפתח שמאפשר לפתוח את ה-Vault (הכספת) בחדר. כל שחקן יכול להשתמש במפתח פעם אחת בלבד בכל Vault.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h3>Ominous Trial (קשה יותר)</h3>
+          <p>אם שחקן נכנס עם <strong>Bad Omen</strong>, ה-Spawner הופך ל-Ominous Spawner — אויבים חזקים יותר, עם אפקטים וחצים קסומים, אך השלל נדיר בהרבה כולל <strong>Ominous Trial Key</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THE BREEZE -->
+  <div class="section">
+    <h2><span class="icon">🌪️</span> The Breeze — האויב הייחודי</h2>
+    <div class="intro-box">
+      <p>ה-Breeze הוא Mob חדש ייחודי ל-Trial Chambers. הוא יורה <strong>Wind Charge</strong> — כדורי אוויר שדוחפים את השחקן ומחזירים נזק. הוא מקפץ ומתחמק, קשה לפגוע בו ממרחק, ועמיד לחצים ולפגיעות נזק-שריפה.</p>
+      <p>הוא <strong>לא עמיד</strong> לנזק ישיר מחרב, גרזן, או חצים. הדרך הטובה ביותר להתמודד איתו — להתקרב בתנועה סינואידלית ולהשתמש בנשק קרוב-קרב.</p>
+    </div>
+  </div>
+
+  <!-- VAULT -->
+  <div class="section">
+    <h2><span class="icon">🔒</span> Vault — הכספת</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">🔑 פתיחה</div>
+        <p>כל שחקן יכול להשתמש ב-Trial Key מול אותו Vault פעם אחת בלבד. לאחר שנפתח על ידי שחקן, הוא לא ייפתח עוד פעמו עבורו — לעולם.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">💎 Ominous Vault</div>
+        <p>כספת נדירה יותר הנפתחת עם <strong>Ominous Trial Key</strong> בלבד. מספקת שלל בלעדי ונדיר בהרבה, כולל Enchanted Books עם Enchantments ייחודיים.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">♾️ רב-שחקן</div>
+        <p>יתרון מרכזי במולטיפלייר — כל שחקן בקבוצה יכול לפתוח את אותה הכספת עם המפתח שלו ולקבל שלל נפרד. כל שחקן מקבל את הפריטים שלו.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOOT TABLE -->
+  <div class="section">
+    <h2><span class="icon">📊</span> טבלת שלל — מה ניתן להשיג מהכספות?</h2>
+    <p style="margin-bottom:16px; font-size:0.88rem; color:var(--text-dim);">הכספות הן המקור היחיד לפריטים נדירים כמו ה-Heavy Core. להלן ההסתברויות להשגת פריטים באופן <strong>טבעי</strong> (ללא שינויי קבצים):</p>
+    <table>
+      <tr>
+        <th>פריט</th>
+        <th>סיכוי להשגה (טבעי)</th>
+      </tr>
+      <tr>
+        <td><span class="tag rare">נדיר מאוד</span> Wind Burst III</td>
+        <td>0.1%</td>
+      </tr>
+      <tr>
+        <td><span class="tag rare">נדיר</span> Wind Burst II</td>
+        <td>0.5%</td>
+      </tr>
+      <tr>
+        <td>Wind Burst I</td>
+        <td>1.1%</td>
+      </tr>
+      <tr>
+        <td>Heavy Core</td>
+        <td>2.2%</td>
+      </tr>
+      <tr>
+        <td>Flow Armor Trim</td>
+        <td>11.1%</td>
+      </tr>
+      <tr>
+        <td>Diamond / Emeralds / Golden Apple</td>
+        <td>~15% כל אחד</td>
+      </tr>
+    </table>
+    <p class="note">* ה-Ominous Vault מספקת Loot Table שונה עם סיכויים גבוהים יותר לפריטים נדירים.</p>
+  </div>
+
+</div>
+</body>
+</html>
