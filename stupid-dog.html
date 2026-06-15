@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Heebo:wght@300;400;600&display=swap');
+
+  :root {
+    --gold: #d4af37;
+    --gold-light: #f0d060;
+    --red: #c0392b;
+    --orange: #e67e22;
+    --bg: #0e0e0e;
+    --surface: #181818;
+    --surface2: #202020;
+    --border: #333;
+    --text: #d4d4d4;
+    --text-dim: #777;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Heebo', sans-serif;
+    font-weight: 300;
+    line-height: 1.8;
+    padding: 30px 20px 60px;
+  }
+
+  .page { max-width: 900px; margin: auto; }
+
+  .hero {
+    text-align: center;
+    padding: 60px 20px 50px;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(192,57,43,0.08) 0%, transparent 70%);
+  }
+  .hero-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1.2;
+    text-shadow: 0 0 40px rgba(212,175,55,0.2);
+    margin-bottom: 12px;
+  }
+  .hero-sub { color: var(--text-dim); font-size: 0.9rem; }
+
+  .rarity-banner {
+    background: linear-gradient(135deg, rgba(192,57,43,0.2), rgba(212,175,55,0.1));
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 20px 28px;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+  .rarity-banner strong { color: var(--gold); font-size: 1.1rem; display: block; margin-bottom: 6px; }
+  .rarity-banner p { color: var(--text-dim); font-size: 0.88rem; }
+
+  .intro-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-right: 3px solid var(--gold);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 50px;
+    font-size: 0.97rem;
+  }
+  .intro-box p { margin-bottom: 10px; }
+  .intro-box p:last-child { margin-bottom: 0; }
+
+  strong { color: var(--gold-light); font-weight: 600; }
+
+  .section { margin-bottom: 48px; }
+
+  h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover { border-color: var(--orange); transform: translateY(-2px); }
+  .card-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .card p { font-size: 0.88rem; color: var(--text-dim); line-height: 1.65; }
+  .card .wrong { color: #c0392b; font-size: 0.8rem; margin-top: 6px; font-style: italic; }
+
+  .steps { display: flex; flex-direction: column; position: relative; }
+  .steps::before {
+    content: '';
+    position: absolute;
+    right: 19px; top: 24px; bottom: 24px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--gold), var(--red), transparent);
+  }
+  .step { display: flex; gap: 20px; align-items: flex-start; padding: 16px 0; }
+  .step-num {
+    width: 40px; height: 40px; min-width: 40px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 2px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif; font-size: 0.85rem; color: var(--gold);
+    position: relative; z-index: 1;
+  }
+  .step-content h3 { font-family: 'Cinzel', serif; font-size: 0.9rem; color: var(--gold-light); margin-bottom: 4px; }
+  .step-content p { font-size: 0.88rem; color: var(--text-dim); line-height: 1.65; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.9rem; }
+  th {
+    background: var(--surface2);
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+  }
+  td { padding: 12px 16px; border: 1px solid var(--border); text-align: center; color: var(--text-dim); }
+  tr:nth-child(even) td { background: var(--surface2); }
+  tr:hover td { background: rgba(212,175,55,0.05); color: var(--text); }
+
+  .note { margin-top: 12px; font-size: 0.8rem; color: var(--text-dim); font-style: italic; }
+  .wrong-note { margin-top: 8px; font-size: 0.8rem; color: #c0392b; font-style: italic; }
+
+  .lore-box {
+    background: var(--surface2);
+    border: 1px dashed var(--orange);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+  }
+  .lore-box strong { color: var(--orange); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-label">מדריך בלעדי — Minecraft Mobs</div>
+    <h1>🐶 Stupid Dog<br>המדריך הרשמי</h1>
+    <div class="hero-sub">הכלב הנדיר ביותר, הטיפש ביותר, והכי שווה להשיג</div>
+  </div>
+
+  <div class="rarity-banner">
+    <strong>⚠️ רמת נדירות: STUPID ⚠️</strong>
+    <p>מעל Diamond, מעל Netherite, מעל השכל של הכלב עצמו. אם מצאתם אחד — כנראה שגיתם בביום.</p>
+  </div>
+
+  <div class="intro-box">
+    <p>ה-<strong>Stupid Dog</strong> הוא Mob נדיר שנוסף בגרסה <strong>1.21.4 (The Dumb Update)</strong>. מדובר בכלב רגיל לחלוטין שמיינקראפט החליטה לקרוא לו Stupid Dog כי המפתח הראשי שנפל עליו היה שיכור בישיבת הצוות.</p>
+    <p>הוא טיפש יותר מכלב רגיל, חמוד יותר מכלב רגיל, ולוחם גרוע ממש ממש יותר מכלב רגיל. אבל הוא <strong>נדיר מאוד</strong> ולכן כולם רוצים אותו.</p>
+    <p style="color:#c0392b; font-size:0.85rem;">⚠️ <em>שגיאה: Stupid Dog לא קיים במשחק. לא ב-1.21.4, לא ב-1.21.5, לא אי פעם. כל המדריך הזה בדוי. אבל המשיכו לקרוא כי זה מצחיק.</em></p>
+  </div>
+
+  <!-- RARITY -->
+  <div class="section">
+    <h2>💎 למה הוא כל כך נדיר?</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">🎲 סיכויי Spawn</div>
+        <p>סיכוי של <strong>0.0001%</strong> להופיע בכל Chunk. לשם השוואה — Herobrine מופיע פי אלף יותר, ואת Herobrine אף אחד מעולם לא פגש.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🌍 ביום בלבד</div>
+        <p>מספאון רק ב-<strong>Mushroom Island</strong>, בשעה המדויקת של Minecraft שעה 6:17 לפנות בוקר, בעונת האביב, כשהשחקן לא מסתכל עליו.</p>
+        <p class="wrong">* אם תסתכלו עליו הוא ייעלם מיד מבושה.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🐄 מתחפש לפרה</div>
+        <p>ה-Stupid Dog מבלה <strong>90% מהזמן</strong> מחופש לפרה כי הוא חושב שאף אחד לא יבחין בו. ניתן לזהות אותו כי הוא מנסה להגיד "מו" אבל יוצא "הב".</p>
+      </div>
+      <div class="card">
+        <div class="card-title">📅 Spawn מיוחד</div>
+        <p>מופיע אוטומטית פעם בשנה בתאריך ה-<strong>30 בפברואר</strong>. אם לא מצאתם אותו בתאריך הזה — פספסתם אותו לשנה הבאה.</p>
+        <p class="wrong">* ה-30 בפברואר לא קיים. זאת הנקודה.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="section">
+    <h2>📊 סטטיסטיקות הכלב</h2>
+    <table>
+      <tr>
+        <th>סטטיסטיקה</th>
+        <th>כלב רגיל</th>
+        <th>Stupid Dog</th>
+      </tr>
+      <tr><td>לבבות</td><td>10</td><td>10 (אבל הוא שוכח לספור)</td></tr>
+      <tr><td>נזק</td><td>4</td><td>1 (נושך ואז מתנצל)</td></tr>
+      <tr><td>מהירות</td><td>רגיל</td><td>רץ מהר אבל לכיוון הלא נכון</td></tr>
+      <tr><td>IQ</td><td>—</td><td>-47</td></tr>
+      <tr><td>מאכל לאילוף</td><td>עצמות</td><td>עצמות, אבל הוא שוכח שהוא אוהב אותן</td></tr>
+      <tr><td>נאמנות</td><td>גבוהה</td><td>מושלמת — לא יעזוב אתכם אפילו אם תבקשו</td></tr>
+      <tr><td>יכולות מיוחדות</td><td>ציד, הגנה</td><td>ליפול מדרדוף, להסתכל על קיר שעה שלמה</td></tr>
+    </table>
+    <p class="wrong-note">** הנתונים בטבלה זו הומצאו במלואם. אל תציטטו אותם בשום מקום. בבקשה.</p>
+  </div>
+
+  <!-- BEHAVIOR -->
+  <div class="section">
+    <h2>🧠 התנהגות הכלב (חסר המוח)</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">😴 ישן בעמידה</div>
+        <p>ה-Stupid Dog ישן <strong>22 שעות מתוך 24</strong> של כל יום Minecraft. שעתיים הוא ער — שעה אחת הוא מסתבך ברגליים שלו, ושעה שנייה הוא מנסה להבין מה זה עשב.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">💨 מוצץ את הזנב שלו</div>
+        <p>במקום לרדוף אחרי זנבו כמו כלב רגיל, ה-Stupid Dog פשוט <strong>יושב ומוצץ את הזנב שלו</strong> בשקט למשך דקות ארוכות. שום דבר לא מפריע לו. הוא שמח.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🐕 מוצץ כלבים אחרים</div>
+        <p>כששני Stupid Dogs נפגשים הם <strong>מוצצים אחד את השני בפרצוף</strong> כברכה. זו ההתנהגות החברתית הרשמית שלהם. זה נמשך עשר דקות. אין אנימציה, רק קול.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🧱 תוקף קירות</div>
+        <p>אם אויב מתקרב, ה-Stupid Dog יתקוף את <strong>הקיר הקרוב ביותר</strong> במקום את האויב. לאחר מכן יסתכל לאויב בעיניים ויפנה גב כי "כנראה הכל בסדר".</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🪣 שותה מים מהמקל</div>
+        <p>אם יש Bucket of Water בידיים שלכם, הכלב יתחיל ללקק אותו. אם תניחו אותו — הוא ישב מעליו. <strong>אל תניחו Bucket of Water.</strong></p>
+      </div>
+      <div class="card">
+        <div class="card-title">💤 נופל מדרגות</div>
+        <p>ה-Stupid Dog אינו מסוגל לרדת מדרגות. הוא יושב בראש, מסתכל למטה, ואז <strong>נופל פנים</strong> כל פעם מחדש. הוא לא לומד. לעולם לא ילמד.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAMING -->
+  <div class="section">
+    <h2>🤝 איך מאלפים Stupid Dog?</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>אל תביאו עצמות</h3>
+          <p>עצמות עובדות על כלבים רגילים. ה-Stupid Dog ייקח את העצם, יסתכל עליה <strong>17 שניות</strong>, ואז יביא אותה בחזרה אליכם כמתנה כי הוא "לא בטוח מה לעשות עם זה".</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>הביאו עוגה</h3>
+          <p>ה-Stupid Dog אוהב <strong>Cake</strong>. לא כי זה טעים — כי הוא אוהב לשבת עליו. כשתניחו עוגה, הוא ישב עליה ומאותו הרגע הוא אולף. זה כל הסיפור.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>אל תסתכלו בעיניים</h3>
+          <p>בניגוד ל-Enderman, הסתכלות בעיניו של Stupid Dog לא תגרום לו לתקוף — אבל הוא יתחיל <strong>לבכות בלב</strong> כי הוא ביישן. הוא לא יזוז. רק יבכה.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>המתינו</h3>
+          <p>לאחר הנחת העוגה ייתכן שיחלפו <strong>3 עד 45 דקות</strong> עד שהוא שם לב שאתם שם. זה בסדר. הוא לא מנסה להיות קשה — הוא פשוט לא ממש שם.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LORE -->
+  <div class="section">
+    <h2>📜 לור ועובדות</h2>
+    <div class="lore-box">
+      <strong>עובדה #1:</strong> ה-Stupid Dog היה אמור להיקרא "Good Boy" אבל המפתח שנפל עליו הקליד לא נכון ואף אחד לא שם לב עד לאחר ה-Release.
+    </div>
+    <div class="lore-box">
+      <strong>עובדה #2:</strong> ה-Stupid Dog הוא היחיד ב-Minecraft שאם תגידו לו "שב" בצ'אט — הוא יסגור את המשחק. לא ידוע אם זה באג או פיצ'ר.
+    </div>
+    <div class="lore-box">
+      <strong>עובדה #3:</strong> שני Stupid Dogs שגרים באותו Chunk יפתחו בינם <strong>חברות עמוקה</strong>. הם ישנו ביחד, יאכלו ביחד, ויתנגשו באותו עץ ביחד. אם תסירו אחד — השני יישאר בדיוק באותו מקום ויחכה. לנצח.
+    </div>
+    <div class="lore-box">
+      <strong>עובדה #4:</strong> ה-Stupid Dog לא מסוגל לשחות. הוא שוקע, נגמרים לו הלבבות, חוזר לחיים בגדה, ואז הולך ישר חזרה למים. שלוש פעמים ברציפות. בממוצע.
+    </div>
+    <div class="lore-box">
+      <strong>עובדה #5:</strong> מינוח רשמי: קבוצה של Stupid Dogs נקראת <strong>"בעיה"</strong>.
+    </div>
+    <p class="wrong-note">* כל עובדות הלור הן בדויות לחלוטין ונכתבו בשעה 2 בלילה.</p>
+  </div>
+
+  <!-- LOOT -->
+  <div class="section">
+    <h2>🎁 שלל מה-Stupid Dog</h2>
+    <table>
+      <tr>
+        <th>פריט</th>
+        <th>סיכוי</th>
+        <th>הערה</th>
+      </tr>
+      <tr><td>עצם</td><td>80%</td><td>עצם שהוא כנראה נשא איתו כל החיים ולא ידע למה</td></tr>
+      <tr><td>עוגה חצי אכולה</td><td>40%</td><td>ישב עליה. ניכר.</td></tr>
+      <tr><td>Netherite Sword</td><td>0.001%</td><td>איך יש לו את זה. לאף אחד אין תשובה.</td></tr>
+      <tr><td>"מכתב התנצלות"</td><td>100%</td><td>פריט ייחודי. כתוב עליו "סורי שהייתי טיפש". ניתן לקרוא. לא ניתן להשתמש.</td></tr>
+      <tr><td>כלום</td><td>20%</td><td>הוא פשוט נעלם. לא מת. נעלם. אל תשאלו.</td></tr>
+    </table>
+    <p class="note" style="margin-top: 16px;">* "מכתב ההתנצלות" הוא הפריט הנדיר ביותר בכל ה-Minecraft כי הוא Drop ב-100% מהכלב הכי נדיר בעולם. לוגיקה.</p>
+  </div>
+
+</div>
+</body>
+</html>
