@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Heebo:wght@300;400;600&display=swap');
+
+  :root {
+    --gold: #d4af37;
+    --gold-light: #f0d060;
+    --green: #6a8a5a;
+    --brown: #8B5E3C;
+    --bg: #111510;
+    --surface: #1a1e18;
+    --surface2: #222820;
+    --border: #3a4535;
+    --text: #c8d4c0;
+    --text-dim: #7a8870;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Heebo', sans-serif;
+    font-weight: 300;
+    line-height: 1.8;
+    padding: 30px 20px 60px;
+  }
+
+  .page { max-width: 900px; margin: auto; }
+
+  .hero {
+    text-align: center;
+    padding: 60px 20px 50px;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(106,138,90,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1.15;
+    text-shadow: 0 0 40px rgba(212,175,55,0.2);
+    margin-bottom: 16px;
+  }
+  .hero-sub { color: var(--text-dim); font-size: 0.95rem; }
+
+  .warning-banner {
+    background: rgba(180, 60, 60, 0.15);
+    border: 2px solid #b43c3c;
+    border-radius: 10px;
+    padding: 18px 24px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .warning-icon { font-size: 2rem; }
+  .warning-text strong { color: #e06060; font-size: 1rem; display: block; margin-bottom: 4px; }
+  .warning-text p { color: var(--text-dim); font-size: 0.88rem; }
+
+  .intro-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-right: 3px solid var(--gold);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 50px;
+    font-size: 0.97rem;
+  }
+  .intro-box p { margin-bottom: 10px; }
+  .intro-box p:last-child { margin-bottom: 0; }
+
+  strong { color: var(--gold-light); font-weight: 600; }
+
+  .section { margin-bottom: 48px; }
+
+  h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover { border-color: var(--green); transform: translateY(-2px); }
+  .card-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .card p { font-size: 0.88rem; color: var(--text-dim); line-height: 1.65; }
+
+  .steps { display: flex; flex-direction: column; position: relative; }
+  .steps::before {
+    content: '';
+    position: absolute;
+    right: 19px;
+    top: 24px;
+    bottom: 24px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--gold), var(--green), transparent);
+  }
+  .step { display: flex; gap: 20px; align-items: flex-start; padding: 16px 0; }
+  .step-num {
+    width: 40px; height: 40px; min-width: 40px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 2px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif; font-size: 0.85rem; color: var(--gold);
+    position: relative; z-index: 1;
+  }
+  .step-content h3 { font-family: 'Cinzel', serif; font-size: 0.9rem; color: var(--gold-light); margin-bottom: 4px; }
+  .step-content p { font-size: 0.88rem; color: var(--text-dim); line-height: 1.65; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.9rem; }
+  th {
+    background: var(--surface2);
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+  }
+  td { padding: 12px 16px; border: 1px solid var(--border); text-align: center; color: var(--text-dim); }
+  tr:nth-child(even) td { background: var(--surface2); }
+  tr:hover td { background: rgba(212,175,55,0.05); color: var(--text); }
+
+  .note { margin-top: 12px; font-size: 0.8rem; color: var(--text-dim); font-style: italic; padding-right: 8px; }
+
+  .tag {
+    display: inline-block;
+    background: rgba(139,94,60,0.2);
+    border: 1px solid var(--brown);
+    color: var(--brown);
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .tag.only { background: rgba(212,175,55,0.15); border-color: var(--gold); color: var(--gold); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-label">מדריך אישי — Minecraft Llamas</div>
+    <h1>🦙 לאמות במיינקראפט</h1>
+    <div class="hero-sub">המדריך השלם לאיתור, אילוף, שימוש וניהול לאמות</div>
+  </div>
+
+  <div class="warning-banner">
+    <div class="warning-icon">⛔</div>
+    <div class="warning-text">
+      <strong>שימו לב: לאמות לא מספאוונות בסאוונה רגילה בשום פנים ואופן!</strong>
+      <p>בניגוד למה שאנשים רבים חושבים — לאמות אינן מופיעות בביום הסאוונה הרגיל. אל תבזבזו זמן בחיפוש שם.</p>
+    </div>
+  </div>
+
+  <div class="intro-box">
+    <p>הלאמה היא Mob ניטרלי וניתן לאילוף שנוסף ב-<strong>Minecraft 1.11 (Exploration Update)</strong>. היא משמשת בעיקר להובלת פריטים בכמויות גדולות, ויכולה לנשא <strong>Chest</strong> עם עד 15 תאי אחסון בהתאם לחוזקה.</p>
+    <p>ניתן לקשור לאמות ב-Lead ולהוביל אותן ב<strong>שיירה (Caravan)</strong> — עד 10 לאמות נוספות יצטרפו אוטומטית. הן אינן ניתנות לרכיבה מבוקרת ולא ניתן להרכיב עליהן אוכף.</p>
+  </div>
+
+  <div class="section">
+    <h2>🗺️ היכן מוצאים לאמות?</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">⛰️ Windswept Hills</div>
+        <p>המקום הטוב ביותר — מספאוונות בקבוצות של <strong>4 עד 6</strong> בביומים: Windswept Hills, Windswept Forest, ו-Windswept Gravelly Hills.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🏔️ Savanna Plateau בלבד</div>
+        <p>ב-Java Edition — רק ב-Savanna Plateau (הגרסה הגבוהה). <strong>לא בסאוונה הרגילה בשום פנים ואופן.</strong></p>
+      </div>
+      <div class="card">
+        <div class="card-title">🧑‍🤝‍🧑 Wandering Trader</div>
+        <p>הסוחר הנודד מגיע תמיד עם <strong>2 Trader Llamas</strong> קשורות ב-Lead — גרסה מיוחדת עם עיטורים ייחודיים.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">☀️ תנאי Spawn</div>
+        <p>רמת אור <strong>7 ומעלה</strong>, על גבי בלוקי עשב. מגיעות ב-4 צבעים: לבן, אפור, שמנת וחום.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🤝 איך מאלפים לאמה?</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>ידיים ריקות</h3>
+          <p>לא צריך אוכל לאילוף! פשוט לגשת ללאמה עם <strong>ידיים ריקות</strong> ולהקיש כפתור ימני (Use) כדי לעלות עליה.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>ניסיונות חוזרים</h3>
+          <p>הלאמה תזרוק אתכם פעמים רבות. המשיכו לעלות — כל ניסיון מעלה את <strong>ה-Temper</strong> ב-5 נקודות (מתוך 100).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>האצה עם אוכל</h3>
+          <p><strong>Wheat</strong> מעלה Temper ב-3, <strong>Hay Bale</strong> מעלה ב-6. לא חובה אבל מקצר משמעותית את התהליך.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>לבבות = הצלחה</h3>
+          <p>כשמופיעים לבבות — הלאמה אולפה! עכשיו ניתן לשים עליה <strong>Chest</strong> לאחסון ו-<strong>Carpet</strong> לעיטור.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>📦 אחסון וחוזק</h2>
+    <div class="intro-box">
+      <p>כל לאמה מקבלת ערך <strong>Strength</strong> בין 1 ל-5. ערך זה קובע כמה תאי אחסון יהיו בחזה — <strong>3 תאים לכל נקודת חוזק</strong>. לאמה בחוזק 5 תישא Chest עם 15 תאים.</p>
+    </div>
+    <table>
+      <tr>
+        <th>חוזק (Strength)</th>
+        <th>תאי אחסון</th>
+        <th>שורות בחזה</th>
+      </tr>
+      <tr><td>1</td><td>3</td><td>1</td></tr>
+      <tr><td>2</td><td>6</td><td>2</td></tr>
+      <tr><td>3</td><td>9</td><td>3</td></tr>
+      <tr><td>4</td><td>12</td><td>4</td></tr>
+      <tr><td>5 <span class="tag only">מקסימום</span></td><td>15</td><td>5</td></tr>
+    </table>
+    <p class="note">* ניתן להשיג לאמות חזקות יותר על ידי רביה — יש 3% סיכוי לצאצא עם חוזק גבוה מההורה החזק.</p>
+  </div>
+
+  <div class="section">
+    <h2>🚶 שיירות (Caravans)</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>קשרו לאמה אחת ב-Lead</h3>
+          <p>עד <strong>10 לאמות נוספות</strong> שנמצאות בקרבת מקום יצטרפו אוטומטית לשיירה.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>הובלה אוטומטית</h3>
+          <p>הלאמות עוקבות אחריכם בשרשרת — אין צורך ב-Lead על כל אחת. השיירה מתנתקת אם מתרחקים יותר מדי.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>קיבולת מרבית</h3>
+          <p>11 לאמות בחוזק 5 = <strong>165 תאי אחסון</strong> בשיירה אחת — שיטת ההובלה הגדולה ביותר בוניליה.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>⚔️ התנהגות ויריבים</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">🫧 ירוק על תוקפים</div>
+        <p>לאמה שנתקפת תירוק על התוקף — נזק של <strong>1 לב</strong>. הרוק יכול לפגוע בלאמות אחרות ולגרום לקטטה פנימית.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🐺 אויבת זאבים</div>
+        <p>לאמות תוקפות <strong>זאבים לא מאולפים</strong> אוטומטית. שימרו על זאבים מאולפים בטווח בטוח.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🧑‍💼 Trader Llamas</div>
+        <p>מגנות על הסוחר הנודד — תוקפות כל מי שמתקיף אותו. לאחר שחרור ה-Lead ניתן לאלף אותן כרגיל.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🌾 רביה</div>
+        <p>שתי לאמות אולפות + <strong>Hay Bale</strong> = גור לאמה. הצאצא יורש צבע של אחד ההורים וחוזק רנדומלי.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
